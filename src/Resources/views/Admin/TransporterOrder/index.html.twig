@@ -1,0 +1,17 @@
+{% extends '@SyliusAdmin/layout.html.twig' %}
+
+{% set definition = resources.definition %}
+{% set data = resources.data %}
+{% set event_prefix = metadata.applicationName ~ '.admin.' ~ metadata.name ~ '.index' %}
+{% set header = configuration.vars.header|default(metadata.applicationName~'.ui.'~metadata.pluralName) %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/arobasessyliustransporterlabelgenerationplugin/css/transporterLabelGeneration.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <script src="{{ asset('bundles/arobasessyliustransporterlabelgenerationplugin/js/OrderLabel.js') }}"></script>
+    <script src="{{ asset('bundles/arobasessyliustransporterlabelgenerationplugin/js/transporterOrderGrid.js') }}"></script>
+    {{ sylius_template_event([event_prefix, 'sylius.admin.index'], _context) }}
+{% endblock %}

@@ -1,0 +1,4 @@
+{% if data %}
+    {% set countryName = arobases_label_generation_get_country_from_code(sylius.channel.defaultLocale, data.countryCode) %}
+    {{ countryName }}
+{% endif %}

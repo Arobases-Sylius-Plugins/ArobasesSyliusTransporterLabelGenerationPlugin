@@ -1,0 +1,63 @@
+{% import "@SyliusAdmin/Common/Macro/money.html.twig" as money %}
+
+{% if labels|length > 0 %}
+    <h2>{{ 'arobases_sylius_transporter_label_generation_plugin.ui.summary'|trans }}</h2>
+    {% if orderSent is defined and orderSent %}
+        <div class="badge green order-state">{{ 'arobases_sylius_transporter_label_generation_plugin.order.order_sent'|trans }}</div>
+    {% elseif orderSent is not defined or (orderSent == false and countLabelItems < 1) %}
+        <div class="badge red order-state">{{ 'arobases_sylius_transporter_label_generation_plugin.order.order_not_sent'|trans }}</div>
+    {% elseif orderSent == false and countLabelItems > 0 %}
+        <div class="badge orange order-state">{{ 'arobases_sylius_transporter_label_generation_plugin.order.order_partially_sent'|trans }}</div>
+    {% endif %}
+    <div>
+        <h3>{{ 'arobases_sylius_transporter_label_generation_plugin.ui.sent_products'|trans }}</h3>
+        <table>
+            <thead>
+            <tr>
+                <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label_item.product_name'|trans }}</td>
+                <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label_item.quantity'|trans }}</td>
+                <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label_item.tracking_number'|trans }}</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for label in labels %}
+                {% for item in label.labelItems %}
+                    <tr>
+                        <td>{{ item.orderItem.variant.translation.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ label.trackingNumber }}</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <h3>{{ 'arobases_sylius_transporter_label_generation_plugin.ui.generated_labels'|trans }}</h3>
+        <table>
+            <thead>
+            <tr>
+                <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label.simple_label'|trans }}</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for label in labels %}
+                <tr>
+                    <td>
+                        <div>
+                            <span>{{ label.trackingNumber }}</span>
+                            <div class="actions">
+                                <a class="button ui label icon" href="{{ asset(label.path) }}" download><i class="arrow circle down icon"></i></a>
+                                <button class="button ui label primary icon"><i class="print icon"></i></button>
+                                <button class="button ui label red icon delete-label-btn" data-delete-url="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_delete_ajax', {labelId: label.id}) }}"><i class="trash alternate outline icon"></i></button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="badge red order-state">{{ 'arobases_sylius_transporter_label_generation_plugin.order.order_not_sent'|trans }}</div>
+{% endif %}

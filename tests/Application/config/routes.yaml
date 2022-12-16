@@ -1,0 +1,29 @@
+arobases_sylius_transporter_label_generation_shop:
+    resource: "@ArobasesSyliusTransporterLabelGenerationPlugin/Resources/config/shop_routing.yml"
+    prefix: /{_locale}
+    requirements:
+        _locale: ^[a-z]{2}(?:_[A-Z]{2})?$
+
+arobases_sylius_transporter_label_generation_admin:
+    resource: "@ArobasesSyliusTransporterLabelGenerationPlugin/Resources/config/admin_routing.yml"
+    prefix: /admin
+#    prefix: /%sylius_admin.path_name%
+
+sylius_shop_ajax_cart_add_item:
+    path: /add
+    methods: [POST]
+    defaults:
+        _controller: sylius.controller.order_item:addAction
+        _format: json
+        _sylius:
+            factory:
+                method: createForProduct
+                arguments: [expr:notFoundOnNull(service('sylius.repository.product').find($productId))]
+            form:
+                type: Sylius\Bundle\CoreBundle\Form\Type\Order\AddToCartType
+                options:
+                    product: expr:notFoundOnNull(service('sylius.repository.product').find($productId))
+            redirect:
+                route: sylius_shop_cart_summary
+                parameters: {}
+            flash: sylius.cart.add_item

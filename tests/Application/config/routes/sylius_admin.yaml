@@ -1,0 +1,7 @@
+sylius_admin:
+    resource: "@SyliusAdminBundle/Resources/config/routing.yml"
+    prefix: /admin
+
+sylius_admin_order_label:
+    resource: "@SyliusAdminBundle/Resources/config/routing.yml"
+    prefix: /admin

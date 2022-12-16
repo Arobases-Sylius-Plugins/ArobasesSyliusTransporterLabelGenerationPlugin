@@ -1,0 +1,3 @@
+arobases_sylius_transporter_label_generation:
+  message:
+    access_denied: Vous n'avez pas l'autorisation pour accéder à cette page.

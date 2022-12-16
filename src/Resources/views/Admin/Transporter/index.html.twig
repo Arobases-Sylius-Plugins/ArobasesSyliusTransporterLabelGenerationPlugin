@@ -1,0 +1,7 @@
+{% extends '@SyliusAdmin/layout.html.twig' %}
+{% set event_prefix = metadata.applicationName ~ '.admin.' ~ metadata.name ~ '.index' %}
+{% set header = configuration.vars.header|default(metadata.applicationName~'.ui.'~metadata.pluralName) %}
+
+{% block content %}
+    {{ sylius_template_event([event_prefix, 'sylius.admin.index'], _context) }}
+{% endblock %}

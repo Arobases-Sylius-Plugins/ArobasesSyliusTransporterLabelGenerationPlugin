@@ -1,0 +1,78 @@
+services:
+
+  arobases.transporter_label_generation.connector.api.colissimo:
+    class: Arobases\SyliusTransporterLabelGenerationPlugin\Connector\Api\Colissimo\ColissimoRequest
+
+  ###############################  BEGIN EVENT LISTENER ###############################
+
+  arobases.transporter_label_generation.listener.admin_menu:
+    class: Arobases\SyliusTransporterLabelGenerationPlugin\Menu\AdminMenuListener
+    tags:
+      - { name: kernel.event_listener, event: sylius.menu.admin.main, method: addAdminMenuItems }
+
+  ###############################  BEGIN CONTROLLER ###############################
+
+  Arobases\SyliusTransporterLabelGenerationPlugin\Controller\OrderLabelController:
+    tags:
+      - { name: controller.service_arguments }
+    calls:
+      - [ setContainer, [ "@service_container" ] ]
+    arguments:
+      - '@sylius.repository.order'
+      - '@doctrine.orm.entity_manager'
+      - '@sylius.repository.order_item'
+      - '@arobases_sylius_transporter_label_generation_plugin.repository.label'
+      - '@arobases_sylius_transporter_label_generation_plugin.repository.label_item'
+      - '@arobases_sylius_transporter_label_generation_plugin.repository.transporter'
+      - '@arobases.transporter_label_generation.connector.api.colissimo'
+      - '@sylius.context.channel'
+      - '%kernel.project_dir%/public/'
+      - 'upload/label/colissimo/'
+
+  Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShippingMethodsController:
+    tags:
+      - { name: controller.service_arguments }
+    calls:
+      - [ setContainer, [ "@service_container" ] ]
+    arguments:
+      - '@arobases_sylius_transporter_label_generation_plugin.repository.transporter'
+      - '@sylius.repository.shipping_method'
+      - '@doctrine.orm.entity_manager'
+      - '@arobases.transporter_label_generation.connector.api.colissimo'
+      - '@sylius.repository.order'
+      - '@session.flash_bag'
+
+  ###############################  BEGIN TWIG EXTENSION ###############################
+
+  arobases.transporter_label_generation.twig_extension.format_right_array:
+    class: Arobases\SyliusTransporterLabelGenerationPlugin\Twig\Extensions\CountryExtension
+    public: false
+    tags:
+      - { name: twig.extension }
+
+
+  ###############################  BEGIN FORM ###############################
+
+  arobases.transporter_label_generation.form.shipping_method:
+    class: Arobases\SyliusTransporterLabelGenerationPlugin\Form\Extension\ShippingMethodTypeExtension
+    tags:
+      - { name: form.type_extension, extended_type: Sylius\Bundle\ShippingBundle\Form\Type\ShippingMethodType }
+    arguments:
+      - '@arobases.transporter_label_generation.provider.transporter_product_code'
+
+  arobases.transporter_label_generation.form.address:
+    class: Arobases\SyliusTransporterLabelGenerationPlugin\Form\Extension\AddressTypeExtension
+    tags:
+      - { name: form.type_extension, extended_type: Sylius\Bundle\AddressingBundle\Form\Type\AddressType }
+
+  arobases.transporter_label_generation.form.transporter_product_code:
+    class: Arobases\SyliusTransporterLabelGenerationPlugin\Form\Type\TransporterProductCodeType
+    tags:
+      - { name: form.type }
+    arguments:
+      - '@arobases.transporter_label_generation.provider.transporter_product_code'
+
+  ###############################  BEGIN PROVIDER ###############################
+
+  arobases.transporter_label_generation.provider.transporter_product_code:
+    class: Arobases\SyliusTransporterLabelGenerationPlugin\Provider\TransporterProductCodeProvider

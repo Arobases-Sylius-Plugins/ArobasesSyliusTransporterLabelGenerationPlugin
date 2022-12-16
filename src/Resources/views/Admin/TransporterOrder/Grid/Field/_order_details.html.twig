@@ -1,0 +1,41 @@
+{% import "@SyliusAdmin/Common/Macro/money.html.twig" as money %}
+<div class="order-details-container" data-label-summary-url="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_render_label_summary', {orderId: order.id}) }}">
+    <form name="updated-order" action="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_generate_label') }}" method="post">
+        <div class="order-details-header">
+            <h2>{{ 'arobases_sylius_transporter_label_generation_plugin.order.details'|trans }}</h2>
+            <button class="ui button icon primary generate-label-btn">{{ 'arobases_sylius_transporter_label_generation_plugin.ui.generate'|trans }}</button>
+            <input type="hidden" name="order_id" value="{{ order.id }}">
+        </div>
+        <div>
+            <div class="order-summary">
+                <div><span>{{ 'arobases_sylius_transporter_label_generation_plugin.order.total_ttc'|trans }} :</span> {{ money.format(order.total, sylius.channel.baseCurrency) }}</div>
+                <div><span>{{ 'arobases_sylius_transporter_label_generation_plugin.order.total_shipping_costs'|trans }} :</span> {{ money.format(shippingCosts, sylius.channel.baseCurrency) }}</div>
+                <div><span>{{ 'arobases_sylius_transporter_label_generation_plugin.order.total_weight'|trans }} :</span> {{ totalWeight }} kg</div>
+                <div><span>{{ 'arobases_sylius_transporter_label_generation_plugin.order.total_sending_weight'|trans }} :</span> <input type="number" min="0" class="total-weight" name="total_weight" value="{{ totalWeight }}"> kg</div>
+            </div>
+            <table>
+                <thead>
+                <tr>
+                    <td>{{ 'arobases_sylius_transporter_label_generation_plugin.order_item.code'|trans }}</td>
+                    <td>{{ 'arobases_sylius_transporter_label_generation_plugin.order_item.name'|trans }}</td>
+                    <td>{{ 'arobases_sylius_transporter_label_generation_plugin.order_item.quantity'|trans }}</td>
+                    <td>{{ 'arobases_sylius_transporter_label_generation_plugin.order_item.unit_price_HT'|trans }}</td>
+                    <td>{{ 'arobases_sylius_transporter_label_generation_plugin.order_item.unit_weight'|trans }}</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in order.items %}
+                    <tr>
+                        <td>{{ item.variant.code }}</td>
+                        <td>{{ item.variant.translation.name }}</td>
+                        <td class="quantity change-order-item"><input name="{{ 'quantity_'~item.id }}" type="number" min="0" value="{{ item.quantity }}"></td>
+                        <td>{{ item.unitPrice }}</td>
+                        <td class="weight change-order-item"><input name="{{ 'weight_'~item.id }}" type="number" min="0" value="{{ item.variant.weight ? item.variant.weight : 0 }}"></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
+    <div class="label-summary"></div>
+</div>

@@ -1,0 +1,24 @@
+sylius_resource:
+  resources:
+    arobases_sylius_transporter_label_generation_plugin.label:
+      driver: doctrine/orm
+      classes:
+        model: Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Label
+        repository: Arobases\SyliusTransporterLabelGenerationPlugin\Repository\LabelRepository
+      templates: '@SyliusAdmin/Crud'
+    arobases_sylius_transporter_label_generation_plugin.label_item:
+      driver: doctrine/orm
+      classes:
+        model: Arobases\SyliusTransporterLabelGenerationPlugin\Entity\LabelItem
+        repository: Arobases\SyliusTransporterLabelGenerationPlugin\Repository\LabelItemRepository
+      templates: '@SyliusAdmin/Crud'
+    arobases_sylius_transporter_label_generation_plugin.transporter:
+      driver: doctrine/orm
+      classes:
+        model: Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Transporter
+        form: Arobases\SyliusTransporterLabelGenerationPlugin\Form\Type\TransporterType
+        repository: Arobases\SyliusTransporterLabelGenerationPlugin\Repository\TransporterRepository
+      templates: '@SyliusAdmin/Crud'
+
+imports:
+  - { resource: "@ArobasesSyliusTransporterLabelGenerationPlugin/Resources/config/grids.yaml" }

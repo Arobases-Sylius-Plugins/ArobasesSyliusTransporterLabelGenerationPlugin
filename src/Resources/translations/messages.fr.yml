@@ -1,0 +1,70 @@
+arobases_sylius_transporter_label_generation_plugin:
+    menu:
+        admin:
+            label_generation: Génération d'étiquettes
+    ui:
+        colissimo: Colissimo
+        shipping_state: Etat de la livraison
+        generate: Générer l'étiquette
+        sent_products: Produits envoyés
+        generated_labels: Etiquettes générées
+        summary: Récapitulatif
+        transporters: Transporteurs
+        new_transporter: Ajouter un transporteur
+        edit_transporter: Modifier un transporteur
+        choose_an_option: Choisir une option
+        update: Modifier
+        submit_pickup_point: Valider ce point relais
+    order:
+        details: Détails de la commande
+        total_ttc: Total TTC
+        total_shipping_costs: Total frais de port TTC
+        total_weight: Poids total
+        total_sending_weight: Poids total de l'envoi
+        order_sent: Commande envoyée
+        order_partially_sent: Commande partiellement envoyée
+        order_not_sent: Commande non envoyée
+    order_item:
+        code: Code
+        name: Nom du produit
+        quantity: Quantité
+        unit_price_HT: Prix unitaire (HT)
+        unit_weight: Poids unitaire (kg)
+    label_item:
+        product_name: Nom du produit
+        quantity: Quantité expédiée
+        tracking_number: Numéro de suivi
+    label:
+        simple_label: Etiquette aller
+    transporter:
+        go: Aller sur ce transporteur
+        account_number: Numéro client
+        password: Mot de passe
+    form:
+        shipping_method:
+            transporter: Transporteur
+            transporter_code: Code du service de transporter
+        update_order_address: Modifier l'adresse de la commande
+    colissimo:
+        product_code:
+            DOM: Colissimo Domicile - sans signature (DOM)
+            DOS: Colissimo Domicile - avec signature (DOS)
+            COLD: Colissimo Domicile - sans signature avant 2016 (COLD)
+            COL: Colissimo Domicile - avec signature avant 2016 (COL)
+            BPR: Colissimo - Point Retrait – en Bureau de Poste (BPR)
+            A2P: Colissimo - Point Retrait – en relais Pickup (A2P)
+            CORE: Colissimo Retour France  (CORE)
+            COLR: Colissimo Flash - sans signature  (COLR)
+            JP1: Colissimo Flash – avec signature (JP1)
+            CORI: Colissimo Retour Outre-Mer (CORI)
+            COM: Colissimo Domicile Outre-Mer - sans signature (COM)
+            CDS: Colissimo Domicile Outre-Mer - avec signature (CDS)
+            ECO: Colissimo Eco Outre-Mer - sans signature (ECO)
+            ECOS: Colissimo Eco Outre-Mer - avec signature (ECOS)
+            CMT: Colissimo Point Retrait International – en relais (CMT)
+            PCS: Colissimo Point Retrait International – Consigne Pickup Station (PCS)
+            BDP: Colissimo Point Retrait International – en bureau de poste (BDP)
+    flashbag:
+        error: Une erreur est survenue
+        update_shipping_method_transporter_code_sucess: Le service de livraison a été modifié
+        update_shipping_method_transporter_code_pickup_point_error: La sélection du point relais a échoué

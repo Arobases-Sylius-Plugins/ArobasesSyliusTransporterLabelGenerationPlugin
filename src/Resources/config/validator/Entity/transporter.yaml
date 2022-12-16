@@ -1,0 +1,6 @@
+Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Transporter:
+  constraints:
+    - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
+  properties:
+    name:
+      - name: ~

@@ -1,0 +1,6 @@
+{% if data %}
+    <div>
+        <button class="ui label button icon primary open-order-row" data-transporter="{{ app.request.attributes.get('id') }}" data-number="{{ data }}" data-render-order-url="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_render_order_details', { number: data }) }}"><i class="plus circle icon"></i></button>
+        {{ data }}
+    </div>
+{% endif %}

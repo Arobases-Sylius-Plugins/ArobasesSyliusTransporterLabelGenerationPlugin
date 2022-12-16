@@ -1,0 +1,8 @@
+{% if data and data|length > 0 %}
+    {% for shipment in data %}
+        <div data-transporter-code="{{ shipment.method ? shipment.method.transporterCode : null }}">
+            {% set shippingMethodId = shipment.method ? shipment.method.id : null %}
+            {{ render(url('arobases_sylius_transporter_label_generation_plugin_admin_render_update_transporter_shipping_method_form', {transporterId: shipment.method.transporter.id, shippingMethodId: shippingMethodId, orderId: shipment.order.id})) }}
+        </div>
+    {% endfor %}
+{% endif %}

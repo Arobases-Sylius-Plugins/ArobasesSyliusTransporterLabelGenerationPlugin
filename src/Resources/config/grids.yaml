@@ -1,0 +1,97 @@
+sylius_grid:
+  grids:
+    arobases_sylius_transporter_label_generation_plugin_order:
+      filters:
+        number:
+          type: string
+          label: sylius.ui.number
+        customer:
+          type: string
+          label: sylius.ui.customer
+          options:
+            fields: [ customer.email, customer.firstName, customer.lastName ]
+        checkout_completed_at:
+          type: date
+          label: sylius.ui.date
+          options:
+            field: checkoutCompletedAt
+            inclusive_to: true
+        channel:
+          type: entity
+          label: sylius.ui.channel
+          form_options:
+            class: "%sylius.model.channel.class%"
+      driver:
+        name: doctrine/orm
+        options:
+          class: '%sylius.model.order.class%'
+          repository:
+            method: findByShippingMethod
+            arguments:
+              - $id
+      sorting:
+        number: asc
+      fields:
+        number:
+          type: twig
+          label: sylius.ui.order
+          options:
+            template: "@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Grid/Field/number.html.twig"
+          sortable: number
+        checkout_completed_at:
+          type: datetime
+          label: sylius.ui.date
+          sortable: checkoutCompletedAt
+        customer:
+          type: twig
+          label: sylius.ui.customer
+          options:
+            template: "@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Grid/Field/customer.html.twig"
+        shipping_state:
+          type: string
+          label: arobases_sylius_transporter_label_generation_plugin.ui.shipping_state
+        shipments:
+          type: twig
+          label: sylius.ui.shipping_method
+          options:
+            template: "@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Grid/Field/shipping_method.html.twig"
+        shipping_address:
+          type: twig
+          label: sylius.ui.country
+          options:
+            template: "@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Grid/Field/country.html.twig"
+
+    arobases_sylius_transporter_label_generation_plugin_transporter:
+      driver:
+        name: doctrine/orm
+        options:
+          class: '%arobases_sylius_transporter_label_generation_plugin.model.transporter.class%'
+      sorting:
+        name: asc
+      fields:
+        name:
+          type: string
+          label: sylius.ui.name
+          sortable: ~
+      filters:
+      actions:
+        item:
+          transporterDashboard:
+            type: transporterDashboard
+            label: arobases_sylius_transporter_label_generation_plugin.transporter.go
+            options:
+              link:
+                route: arobases_sylius_transporter_label_generation_plugin_admin_transporter_show
+                parameters:
+                  id: resource.id
+          update:
+            type: update
+          delete:
+            type: delete
+        main:
+          create:
+            type: create
+
+  templates:
+    action:
+      transporterDashboard: "@ArobasesSyliusTransporterLabelGenerationPlugin/Grid/Action/transporter_dashboard.html.twig"

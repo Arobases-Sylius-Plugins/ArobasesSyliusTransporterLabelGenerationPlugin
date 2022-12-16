@@ -1,0 +1,2 @@
+imports:
+  - { resource: "@ArobasesSyliusTransporterLabelGenerationPlugin/Resources/config/resources.yaml" }

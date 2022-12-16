@@ -1,0 +1,132 @@
+arobases_sylius_transporter_label_generation_plugin_admin_transporter_index:
+  path: /transporter/
+  methods: [GET]
+  defaults:
+    _controller: arobases_sylius_transporter_label_generation_plugin.controller.transporter::indexAction
+    _sylius:
+      permission: true
+      section: admin
+      grid: arobases_sylius_transporter_label_generation_plugin_transporter
+
+arobases_sylius_transporter_label_generation_plugin_admin_transporter_create:
+  path: /transporter/create
+  methods: [GET,POST]
+  defaults:
+    _controller: arobases_sylius_transporter_label_generation_plugin.controller.transporter::createAction
+    _sylius:
+      permission: true
+      section: admin
+      redirect: arobases_sylius_transporter_label_generation_plugin_admin_transporter_index
+      vars:
+        templates:
+          form: '@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/Transporter/form.html.twig'
+
+arobases_sylius_transporter_label_generation_plugin_admin_transporter_update:
+  path: /transporter/{id}/update
+  methods: [GET,PUT]
+  requirements:
+    id: \d+
+  defaults:
+    _controller: arobases_sylius_transporter_label_generation_plugin.controller.transporter::updateAction
+    _sylius:
+      permission: true
+      section: admin
+      redirect: arobases_sylius_transporter_label_generation_plugin_admin_transporter_index
+      vars:
+        templates:
+          form: '@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/Transporter/form.html.twig'
+
+arobases_sylius_transporter_label_generation_plugin_admin_transporter_delete:
+  path: /transporter/{id}/delete
+  methods: [DELETE]
+  requirements:
+    id: \d+
+  defaults:
+    _controller: arobases_sylius_transporter_label_generation_plugin.controller.transporter::deleteAction
+    _sylius:
+      permission: true
+      section: admin
+      redirect: arobases_sylius_transporter_label_generation_plugin_admin_transporter_index
+
+arobases_sylius_transporter_label_generation_plugin_admin_transporter_show:
+  path: /transporter/{id}
+  methods: [GET]
+  requirements:
+    id: \d+
+  defaults:
+    _controller: sylius.controller.order::indexAction
+    _sylius:
+      permission: true
+      section: admin
+      grid: arobases_sylius_transporter_label_generation_plugin_order
+      template: '@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/index.html.twig'
+      vars:
+        header: arobases_sylius_transporter_label_generation_plugin.ui.colissimo
+        subheader: sylius.ui.dashboard
+        icon: tag
+        templates:
+          breadcrumb: "@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Index/_breadcrumb.html.twig"
+
+arobases_sylius_transporter_label_generation_plugin_admin_render_order_details:
+  path: /render-order-details
+  methods: [ GET ]
+  defaults:
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\OrderLabelController::renderOrderDetails
+
+arobases_sylius_transporter_label_generation_plugin_admin_generate_label:
+  path: /generate-label
+  methods: [ POST ]
+  defaults:
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\OrderLabelController::generateLabel
+
+arobases_sylius_transporter_label_generation_plugin_admin_render_label_summary:
+  path: /render-label-summary
+  methods: [ GET ]
+  defaults:
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\OrderLabelController::renderLabelSummaryAjax
+
+arobases_sylius_transporter_label_generation_plugin_admin_label_delete_ajax:
+  path: /label/{labelId}/delete
+  methods: [GET]
+  requirements:
+    labelId: \d+
+  defaults:
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\OrderLabelController::deleteLabelAjax
+
+arobases_sylius_transporter_label_generation_plugin_admin_render_update_transporter_shipping_method_form:
+  path: /render-update-form
+  methods: [GET]
+  defaults:
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShippingMethodsController::renderUpdateForm
+
+arobases_sylius_transporter_label_generation_plugin_admin_update_transporter_shipping_method:
+  path: /update-shipping-method
+  methods: [POST]
+  defaults:
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShippingMethodsController::updateShippingMethodProductCode
+
+arobases_sylius_transporter_label_generation_plugin_render_pickup_point_map:
+  path: /render-pickup-point-map
+  methods: [GET, POST]
+  defaults:
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShippingMethodsController::renderPickupPointMap
+
+arobases_sylius_transporter_label_generation_plugin_admin_choose_pickup_point_ajax:
+  path: /choose-pickup-point
+  methods: [POST]
+  defaults:
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShippingMethodsController::choosePickPointAjax
+
+arobases_sylius_transporter_label_generation_plugin_admin_update_address_order_ajax:
+  path: /update-address-order
+  methods: [POST]
+  defaults:
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShippingMethodsController::updateAddressOrderAjax
+
+sandbox:
+  path: /sandbox
+  methods: [GET]
+  requirements:
+    labelId: \d+
+  defaults:
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\OrderLabelController::sandbox
