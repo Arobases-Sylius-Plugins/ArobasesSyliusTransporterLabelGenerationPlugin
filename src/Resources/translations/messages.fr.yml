@@ -40,6 +40,7 @@ arobases_sylius_transporter_label_generation_plugin:
         go: Aller sur ce transporteur
         account_number: Numéro client
         password: Mot de passe
+        default_output_printing_type: format d'étiquettes par défaut
     form:
         shipping_method:
             transporter: Transporteur

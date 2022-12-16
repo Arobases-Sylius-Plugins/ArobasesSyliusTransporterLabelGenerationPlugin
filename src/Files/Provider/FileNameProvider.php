@@ -7,8 +7,8 @@ namespace Arobases\SyliusTransporterLabelGenerationPlugin\Files\Provider;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-final class FileNameProvider {
-
+final class FileNameProvider
+{
     private Filesystem $fileSystem;
 
     public function __construct(Filesystem $fileSystem)
@@ -19,15 +19,15 @@ final class FileNameProvider {
     public function getFileName(UploadedFile $file, string $pathFile): string
     {
         $baseFileName = $file->getClientOriginalName();
-        $cpt =0;
-        $fileName =$baseFileName;
-        while($this->fileSystem->exists($pathFile .$fileName))
-        {
-            $cpt++;
+        $cpt = 0;
+        $fileName = $baseFileName;
+        while ($this->fileSystem->exists($pathFile . $fileName)) {
+            ++$cpt;
             $explodedFileName = explode('.', $baseFileName);
             $extension = array_pop($explodedFileName);
-            $fileName = implode('.', $explodedFileName) ."_". $cpt . ".".$extension ;
+            $fileName = implode('.', $explodedFileName) . '_' . $cpt . '.' . $extension;
         }
+
         return $fileName;
     }
 }

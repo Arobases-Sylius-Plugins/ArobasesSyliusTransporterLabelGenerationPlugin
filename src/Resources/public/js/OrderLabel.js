@@ -142,8 +142,8 @@ class OrderLabel {
                 success: function (response) {
                     t.renderLabelSummary(form.closest('.order-details-container'));
                 },
-                error: function () {
-                    alert("error");
+                error: function (jqXHR, responseText, errorThrown) {
+                    alert(responseText ? responseText : errorThrown );
                 }
             });
         }

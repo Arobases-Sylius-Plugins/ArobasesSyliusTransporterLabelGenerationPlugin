@@ -14,8 +14,9 @@ final class LabelRepository extends EntityRepository
             ->leftJoin('label.relatedOrder', 'relatedOrder')
             ->andWhere('relatedOrder.id = :orderId')
             ->setParameter('orderId', $orderId)
-            ;
+        ;
         $qb->andWhere($qb->expr()->isNotNull('label.path'));
+
         return $qb->getQuery()->getResult();
     }
 }

@@ -15,6 +15,7 @@ final class LabelItemRepository extends EntityRepository
             ->andWhere('orderItem.id = :orderItemId')
             ->setParameter('orderItemId', $orderItemId)
         ;
+
         return $qb->getQuery()->getResult();
     }
 }

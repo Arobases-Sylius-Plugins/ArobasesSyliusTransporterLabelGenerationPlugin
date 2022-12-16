@@ -11,7 +11,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class AddressTypeExtension extends AbstractTypeExtension
 {
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

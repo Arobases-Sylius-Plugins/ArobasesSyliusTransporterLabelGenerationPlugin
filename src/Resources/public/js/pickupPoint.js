@@ -43,7 +43,8 @@ function showMap() {
 
   let data = {
     shipping_method_selected_code:  listPointsContainer.dataset.shippingMethodId,
-    order_id : listPointsContainer.dataset.orderId,
+    order_id: listPointsContainer.dataset.orderId,
+    transporter_code: listPointsContainer.dataset.transporterCode
   };
 
   let message = "Recherche en cours ...";
@@ -185,8 +186,8 @@ function showMap() {
 
       initEvent();
     },
-    error: function(jqXHR, textStatus, errorThrown) {
-      //$("#chrono_loading").hide();
+    error: function(jqXHR, responseText, errorThrown) {
+      alert(responseText ? responseText : errorThrown)
     }
   });
 }

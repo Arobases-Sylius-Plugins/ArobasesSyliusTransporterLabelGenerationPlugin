@@ -3,5 +3,15 @@
 {% set header = configuration.vars.header|default(metadata.applicationName~'.ui.'~metadata.pluralName) %}
 
 {% block content %}
+    {% for message in app.flashes('update-shipping-method-error') %}
+        <div class="message negative sylius-flash-message ui">
+            {{ message|trans({}, 'flashes') }}
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('update-shipping-method-success') %}
+        <div class="message negative sylius-flash-message ui">
+            {{ message|trans({}, 'flashes') }}
+        </div>
+    {% endfor %}
     {{ sylius_template_event([event_prefix, 'sylius.admin.index'], _context) }}
 {% endblock %}

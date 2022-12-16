@@ -23,16 +23,16 @@ final class TransporterProductCodeType extends AbstractType
         $builder
             ->add('transporterCode', ChoiceType::class, [
                 'label' => false,
-                'choices' => $productCodes
+                'choices' => $productCodes,
             ])
             ->add('shippingMethod', HiddenType::class, [
-                'data' => $options['shippingMethodId']
+                'data' => $options['shippingMethodId'],
             ])
             ->add('transporterId', HiddenType::class, [
-                'data' => $options['transporterId']
+                'data' => $options['transporterId'],
             ])
             ->add('orderId', HiddenType::class, [
-                'data' => $options['orderId']
+                'data' => $options['orderId'],
             ])
         ;
     }

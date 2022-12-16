@@ -6,7 +6,6 @@ namespace Arobases\SyliusTransporterLabelGenerationPlugin\Form\Extension;
 
 use Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Transporter;
 use Arobases\SyliusTransporterLabelGenerationPlugin\Provider\TransporterProductCodeProvider;
-use Arobases\SyliusTransporterLabelGenerationPlugin\Transporter\Colissimo\ProductCode;
 use Sylius\Bundle\ShippingBundle\Form\Type\ShippingMethodType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -27,13 +26,13 @@ class ShippingMethodTypeExtension extends AbstractTypeExtension
             'class' => Transporter::class,
             'label' => 'arobases_sylius_transporter_label_generation_plugin.form.shipping_method.transporter',
             'required' => false,
-            'choice_label' => 'name'
+            'choice_label' => 'name',
         ])
             ->add('transporterCode', ChoiceType::class, [
                 'label' => 'arobases_sylius_transporter_label_generation_plugin.form.shipping_method.transporter_code',
                 'choices' => $productCodes,
                 'required' => false,
-                'placeholder' => 'arobases_sylius_transporter_label_generation_plugin.ui.choose_an_option'
+                'placeholder' => 'arobases_sylius_transporter_label_generation_plugin.ui.choose_an_option',
             ])
         ;
     }

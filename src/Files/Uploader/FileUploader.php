@@ -11,8 +11,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 abstract class FileUploader
 {
     protected Filesystem $filesystem;
+
     protected FileNameProvider $fileNameProvider;
+
     protected string $baseUploadPath;
+
     protected string $complementUploadPath;
 
     public function __construct(
@@ -31,13 +34,14 @@ abstract class FileUploader
     public function upload(UploadedFile $file): ?string
     {
         $uploadPath = $this->baseUploadPath . $this->complementUploadPath;
+
         try {
             $fileName = $this->fileNameProvider->getFileName($file, $uploadPath);
             $this->filesystem->copy($file->getRealPath(), $uploadPath . $fileName);
-        }
-        catch(\Exception $exception){
+        } catch(\Exception $exception) {
             return null;
         }
-        return $this->complementUploadPath .$fileName;
+
+        return $this->complementUploadPath . $fileName;
     }
 }
