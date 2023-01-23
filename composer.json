@@ -1,5 +1,5 @@
 {
-    "name": "arobases-sylius-public/sylius-transporter-label-generation-plugin",
+    "name": "arobases/sylius-transporter-label-generation-plugin",
     "type": "sylius-plugin",
     "description": "Arobases transporter label generation plugin for sylius",
     "keywords": [
