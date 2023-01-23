@@ -15,9 +15,11 @@ class OrderRepository extends BaseOrderRepository
             ->leftJoin('o.shipments', 'shipment')
             ->leftJoin('shipment.method', 'shippingMethod')
             ->leftJoin('shippingMethod.transporter', 'transporter')
-            ->andWhere('transporter.id = :transporterId')
+            ->andWhere('transporter.id IN (:transporterId)')
+            ->andWhere('o.shippingState IN (:shippingState)')
             ->setParameter('transporterId', $transporterId)
-            ;
+            ->setParameter('shippingState', ["ready", "shipped", "in_preparation"])
+        ;
         return $qb;
     }
 }

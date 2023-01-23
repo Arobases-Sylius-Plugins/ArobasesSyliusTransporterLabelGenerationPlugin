@@ -7,7 +7,6 @@ arobases_sylius_transporter_label_generation_shop:
 arobases_sylius_transporter_label_generation_admin:
     resource: "@ArobasesSyliusTransporterLabelGenerationPlugin/Resources/config/admin_routing.yml"
     prefix: /admin
-#    prefix: /%sylius_admin.path_name%
 
 sylius_shop_ajax_cart_add_item:
     path: /add
