@@ -51,7 +51,7 @@
         </div>
     </div>
 
-    <script type="module" src="{{ asset('bundles/arobasessyliustransporterlabelgenerationplugin/js/pickupPoint.js') }}"></script>
+    {{ sylius_template_event(['transporterlabelgenerationplugin.pickup_point.javascripts', 'transporterlabelgenerationplugin.pickup_point.javascripts'], _context) }}
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js" integrity="sha512-OFs3W4DIZ5ZkrDhBFtsCP6JXtMEDGmhl0QPlmWYBJay40TT1n3gt2Xuw8Pf/iezgW9CdabjkNChRqozl/YADmg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 {% endblock %}

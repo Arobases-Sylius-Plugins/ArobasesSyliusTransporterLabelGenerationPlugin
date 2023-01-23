@@ -23,7 +23,6 @@ document.addEventListener("DOMContentLoaded", function() {
     event.preventDefault();
     document.getElementById('is_pickup_point').value = true;
     setFullName();
-    console.log('submit')
     updateAddressForm.submit();
   })
 

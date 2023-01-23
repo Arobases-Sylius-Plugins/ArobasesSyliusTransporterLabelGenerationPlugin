@@ -22,3 +22,4 @@ sylius_resource:
 
 imports:
   - { resource: "@ArobasesSyliusTransporterLabelGenerationPlugin/Resources/config/grids.yaml" }
+  - { resource: "sylius/ui_events.yaml" }

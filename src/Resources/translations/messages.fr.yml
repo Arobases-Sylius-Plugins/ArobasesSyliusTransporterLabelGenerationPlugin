@@ -15,6 +15,7 @@ arobases_sylius_transporter_label_generation_plugin:
         choose_an_option: Choisir une option
         update: Modifier
         submit_pickup_point: Valider ce point relais
+        ready: Prêt
     order:
         details: Détails de la commande
         total_ttc: Total TTC
@@ -40,7 +41,7 @@ arobases_sylius_transporter_label_generation_plugin:
         go: Aller sur ce transporteur
         account_number: Numéro client
         password: Mot de passe
-        default_output_printing_type: format d'étiquettes par défaut
+        default_output_printing_type: Format d'étiquettes par défaut
     form:
         shipping_method:
             transporter: Transporteur

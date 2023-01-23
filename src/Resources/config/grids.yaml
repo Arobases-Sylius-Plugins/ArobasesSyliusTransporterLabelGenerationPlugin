@@ -48,8 +48,10 @@ sylius_grid:
           options:
             template: "@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Grid/Field/customer.html.twig"
         shipping_state:
-          type: string
+          type: twig
           label: arobases_sylius_transporter_label_generation_plugin.ui.shipping_state
+          options:
+            template: "@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Grid/Field/shipping_state.html.twig"
         shipments:
           type: twig
           label: sylius.ui.shipping_method

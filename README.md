@@ -18,7 +18,25 @@ return [
     Arobases\SyliusTransporterLabelGenerationPlugin\ArobasesSyliusTransporterLabelGenerationPlugin::class => ['all' => true],
 ];
 ```
-### Step 3: Include Traits
+
+### Step 3: Import Routes
+
+```bash
+# config/routes.yaml
+arobases_sylius_transporter_label_generation_admin:
+    resource: "@ArobasesSyliusTransporterLabelGenerationPlugin/Resources/config/admin_routing.yml"
+    prefix: /admin
+```
+
+### Step 4: Import config
+
+```bash
+# config/packages/arobases_sylius_transporter_label_generation.yaml
+imports:
+  - { resource: "@ArobasesSyliusTransporterLabelGenerationPlugin/Resources/config/resources.yaml" }
+```
+
+### Step 5: Include Traits
 
 override ShippingMethod entity to include TransporterTrait
 ```bash

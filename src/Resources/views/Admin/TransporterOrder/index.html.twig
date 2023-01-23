@@ -11,7 +11,5 @@
 {% endblock %}
 
 {% block content %}
-    <script src="{{ asset('bundles/arobasessyliustransporterlabelgenerationplugin/js/OrderLabel.js') }}"></script>
-    <script src="{{ asset('bundles/arobasessyliustransporterlabelgenerationplugin/js/transporterOrderGrid.js') }}"></script>
     {{ sylius_template_event([event_prefix, 'sylius.admin.index'], _context) }}
 {% endblock %}

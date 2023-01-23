@@ -1,0 +1,11 @@
+sylius_ui:
+  events:
+    sylius.admin.layout.javascripts:
+      blocks:
+        transporter_label_generation_plugin_settings:
+          template: '@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/Layout/_javascripts.html.twig'
+
+    transporterlabelgenerationplugin.pickup_point.javascripts:
+      blocks:
+        transporter_label_generation_plugin_pickup_points_settings:
+          template: '@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/_javascripts.html.twig'
