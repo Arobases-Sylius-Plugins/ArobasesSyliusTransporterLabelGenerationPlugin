@@ -1,4 +1,6 @@
 /public/assets
+/public/upload/*
+public/upload/*
 /public/css
 /public/js
 /public/media/*

@@ -3,6 +3,11 @@
 ## Installation
 
 ### Step 1: Download the plugin
+
+```bash
+composer require arobases/sylius-transporter-label-generation-plugin
+```
+
 ### Step 2: Enable the plugin
 
 ```bash
