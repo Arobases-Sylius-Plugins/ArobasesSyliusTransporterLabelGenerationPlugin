@@ -32,6 +32,9 @@ class Label implements ResourceInterface
     /** @ORM\Column(type="string", nullable=true) */
     private ?string $path = null;
 
+    /** @ORM\Column(name="path_cn23", type="string", nullable=true) */
+    private ?string $pathCn23 = null;
+
     /**
      * unit: kg
      *
@@ -46,7 +49,7 @@ class Label implements ResourceInterface
     private Collection $labelItems;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Sylius\Component\Core\Model\Order", inversedBy="labels")
+     * @ORM\ManyToOne(targetEntity="Sylius\Component\Core\Model\Order")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL", name="`related_order`")
      */
     private ?Order $relatedOrder;
@@ -138,5 +141,21 @@ class Label implements ResourceInterface
     public function setRelatedOrder(?Order $order): void
     {
         $this->relatedOrder = $order;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPathCn23(): ?string
+    {
+        return $this->pathCn23;
+    }
+
+    /**
+     * @param string|null $pathCn23
+     */
+    public function setPathCn23(?string $pathCn23): void
+    {
+        $this->pathCn23 = $pathCn23;
     }
 }

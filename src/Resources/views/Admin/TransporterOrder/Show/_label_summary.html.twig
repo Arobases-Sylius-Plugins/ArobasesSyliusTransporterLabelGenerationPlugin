@@ -37,22 +37,35 @@
         <table>
             <thead>
             <tr>
+                <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label.tracking_number'|trans }}</td>
                 <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label.simple_label'|trans }}</td>
+                <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label.cn23'|trans }}</td>
+                <td style="max-width: 50px; width: 50px;"></td>
             </tr>
             </thead>
             <tbody>
             {% for label in labels %}
                 <tr>
                     <td>
+                        <span>{{ label.trackingNumber }}</span>
+                    </td>
+                    <td>
                         <div>
-                            <span>{{ label.trackingNumber }}</span>
                             <div class="actions">
                                 <a class="button ui label icon" href="{{ asset(label.path) }}" download><i class="arrow circle down icon"></i></a>
-                                <button class="button ui label primary icon"><i class="print icon"></i></button>
-                                <button class="button ui label red icon delete-label-btn" data-delete-url="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_delete_ajax', {labelId: label.id}) }}"><i class="trash alternate outline icon"></i></button>
                             </div>
                         </div>
                     </td>
+                    <td>
+                        <div>
+                            {% if label.pathCn23 %}
+                                <div class="actions">
+                                    <a class="button ui label icon" href="{{ asset(label.pathCn23) }}" download><i class="arrow circle down icon"></i></a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td style="max-width: 50px; width: 50px;"><button class="button ui label red icon delete-label-btn" data-delete-url="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_delete_ajax', {labelId: label.id}) }}"><i class="trash alternate outline icon"></i></button></td>
                 </tr>
             {% endfor %}
             </tbody>

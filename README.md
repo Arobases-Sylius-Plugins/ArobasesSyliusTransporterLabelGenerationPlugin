@@ -1,6 +1,6 @@
 <h1 align="center">Transporter generation label plugin</h1>
 
-## Installation
+<h2 align="center">Installation</h2>
 
 ### Step 1: Download the plugin
 
@@ -80,4 +80,35 @@ $qb = $this->createQueryBuilder('o')
 ;
 return $qb;
 }
+```
+
+### Step 6: Update database
+
+```bash
+bin/console doctrine:migration:migrate
+```
+
+Don't forget to run those commands to generate your files
+```bash
+bin/console asset:install
+bin/console sylius:theme:asset:install
+```
+
+<h2 align="center">How it works</h2>
+
+think to allow file writting for label generation.
+
+### Add a transporter
+
+As things stand, you can add only Colissimo transporter. To add another one, override TransporterType and add more choices :
+```bash
+# TransporterType.php
+
+->add('name', ChoiceType::class, [
+                'label' => 'sylius.ui.name',
+                'choices' => [
+                    'Colissimo' => 'colissimo',
+                    'another transporter' => 'another_transporter'
+                ],
+            ])
 ```

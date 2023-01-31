@@ -28,7 +28,7 @@ class LabelItem implements ResourceInterface
     private float $weight;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Sylius\Component\Core\Model\OrderItem", inversedBy="labelItems")
+     * @ORM\ManyToOne(targetEntity="Sylius\Component\Core\Model\OrderItem")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL", name="order_item_id")
      */
     private ?OrderItem $orderItem = null;

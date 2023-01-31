@@ -16,6 +16,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderItemRepository;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\OrderItem;
+use Sylius\Component\Core\Model\Shipment;
+use Sylius\Component\Core\Repository\ShipmentRepositoryInterface;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Model\Order;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
@@ -35,6 +37,7 @@ final class OrderLabelController extends AbstractController
         private TransporterRepository $transporterRepository,
         private ColissimoRequest $colissimoRequest,
         private ChannelContextInterface $channelContext,
+        private ShipmentRepositoryInterface $shipmentRepository,
         private string $basePath,
         private string $labelColissimoUploadPath
     ) {
@@ -44,13 +47,13 @@ final class OrderLabelController extends AbstractController
     {
         $orderNumber = $request->query->get('number');
         if (!$orderNumber) {
-            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+            return new JsonResponse('order number missing', Response::HTTP_BAD_REQUEST);
         }
 
         /** @var Order $order */
         $order = $this->orderRepository->findOneBy(['number' => $orderNumber]);
         if (!$order) {
-            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+            return new JsonResponse('order lost', Response::HTTP_BAD_REQUEST);
         }
 
         $shippings = $order->getAdjustments('shipping');
@@ -66,7 +69,11 @@ final class OrderLabelController extends AbstractController
             $totalWeight += $item->getVariant()->getWeight();
         }
 
-        $html = $this->render('@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Show/_order_details.html.twig', ['order' => $order, 'shippingCosts' => $shippingCosts, 'totalWeight' => $totalWeight])->getContent();
+        /** @var Shipment $shipment */
+        $shipment = $this->shipmentRepository->findOneBy(['order' => $order]);
+        $transporterId = $shipment->getMethod()->getTransporter()?->getId();
+
+        $html = $this->render('@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Show/_order_details.html.twig', ['order' => $order, 'shippingCosts' => $shippingCosts, 'totalWeight' => $totalWeight, 'transporterId' => $transporterId])->getContent();
 
         return new JsonResponse(['html' => $html]);
     }
@@ -77,15 +84,16 @@ final class OrderLabelController extends AbstractController
         $transporterId = $request->request->get('transporter');
         $orderId = $request->request->get('order_id');
         if ($totalWeight === null || $totalWeight === '' || $transporterId === null || $transporterId === '' || $orderId === null || $orderId === '') {
-            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+            return new JsonResponse('data missing', Response::HTTP_BAD_REQUEST);
         }
 
         /** @var Order $order */
         $order = $this->orderRepository->find((int) $orderId);
         /** @var Transporter $transporter */
         $transporter = $this->transporterRepository->find((int) $transporterId);
+        
         if (!$order || !$transporter) {
-            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+            return new JsonResponse("order or transporter missing", Response::HTTP_BAD_REQUEST);
         }
 
         //create label
@@ -143,6 +151,7 @@ final class OrderLabelController extends AbstractController
                 $resultat_tmp = $parseResponse->attachments;
                 $label_content = $resultat_tmp[0];
                 $datas = $label_content['data'];
+                $save_valid = true;
 
                 //Save the label
                 if ($params) {
@@ -164,17 +173,38 @@ final class OrderLabelController extends AbstractController
                     $this->entityManager->persist($label);
 
                     $this->entityManager->flush();
+                }
+                else {
+                    $save_valid = false;
+                }
+                // CN23
+                if (count($resultat_tmp) > 1) {
+                    $label_contentCN23 = $resultat_tmp[1];
+                    $datasCN23 = $label_contentCN23['data'];
+                    $fileNameCN23 = $this->labelColissimoUploadPath . $parcelNumber . '_cn23.' . $extension;
+                    $fileCN23 = fopen($this->basePath . $fileNameCN23, 'a+');
+                    if (fwrite($fileCN23, $datasCN23)) { //Save the label in defined folder
+                        fclose($fileCN23);
 
-                    return new JsonResponse(null, Response::HTTP_OK);
+                        $label->setPathCn23($fileNameCN23);
+                        $this->entityManager->persist($label);
+                        $this->entityManager->flush();
+                    }
+                    else {
+                        $save_valid = false;
+                    }
                 }
 
-                return new JsonResponse(null, Response::HTTP_INTERNAL_SERVER_ERROR);
+                if ($save_valid) {
+                    return new JsonResponse(null, Response::HTTP_OK);
+                }
+                return new JsonResponse("label not generated", Response::HTTP_INTERNAL_SERVER_ERROR);
             }
 
             return new JsonResponse($error_message[0], Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+        return new JsonResponse('not colissimo', Response::HTTP_BAD_REQUEST);
     }
 
     public function renderLabelSummaryAjax(Request $request): JsonResponse

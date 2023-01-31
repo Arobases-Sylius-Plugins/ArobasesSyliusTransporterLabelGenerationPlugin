@@ -129,7 +129,7 @@ class OrderLabel {
         let transporterId = document.querySelector('button[data-number="'+orderNumber+'"]').dataset.transporter;
         let formData = new FormData(form);
         formData.append("transporter", transporterId);
-        if (formData.get('total_weight') == 0 || formData.get('total_weight') === "") {
+        if (formData.get('total_weight') === 0 || formData.get('total_weight') === "") {
             alert("Veuillez renseigner un poids total pour l'envoi");
         }
         else {
@@ -140,6 +140,7 @@ class OrderLabel {
                 processData: false,
                 contentType: false,
                 success: function (response) {
+                    console.log(response)
                     t.renderLabelSummary(form.closest('.order-details-container'));
                 },
                 error: function (jqXHR, responseText, errorThrown) {

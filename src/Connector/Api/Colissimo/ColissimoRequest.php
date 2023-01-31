@@ -7,6 +7,7 @@ namespace Arobases\SyliusTransporterLabelGenerationPlugin\Connector\Api\Colissim
 use Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Label;
 use Arobases\SyliusTransporterLabelGenerationPlugin\Entity\LabelItem;
 use Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Transporter;
+use Sylius\Component\Core\Model\Adjustment;
 use Sylius\Component\Core\Model\Channel;
 use Sylius\Component\Core\Model\Order;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,45 +17,49 @@ final class ColissimoRequest extends AbstractController
     public function generateLabel(Channel $channel, Label $label, Transporter $transporter, string $outputPrintingType, string $depositDate): array
     {
         $order = $label->getRelatedOrder();
+        $adjustmentShipping = $order->getAdjustments("shipping");
+        $shippingCosts = 0;
+        /** @var Adjustment $adjustment */
+        foreach ($adjustmentShipping as $adjustment) {
+            $shippingCosts += $adjustment->getAmount();
+        }
         $serviceCode = $order->getShipments()->last()->getMethod()?->getTransporterCode();
         if (!$serviceCode) {
             $serviceCode = 'DOM';
         }
 
-        if ($serviceCode !== 'COM' && $serviceCode !== 'CDS') {
-            $params = [
-                'contractNumber' => $transporter->getAccountNumber(),
-                'password' => $transporter->getPassword(),
-                'outputFormat' => ['x' => 0, 'y' => 0, 'outputPrintingType' => $outputPrintingType],
-                'letter' => [
-                    'service' => [
-                        'productCode' => $serviceCode,
-                        'depositDate' => $depositDate,
-                        'orderNumber' => $order->getNumber(),
-                    ],
-                    'parcel' => ['weight' => $label->getTotalWeight()],
-                    'sender' => [
-                        'address' => [
-                            'companyName' => $channel->getShopBillingData()->getCompany(),
-                            'line2' => $channel->getShopBillingData()->getStreet(),
-                            'countryCode' => $channel->getShopBillingData()->getCountryCode(),
-                            'city' => $channel->getShopBillingData()->getCity(),
-                            'zipCode' => $channel->getShopBillingData()->getPostcode(),
-                        ],
-                    ],
-                    'addressee' => [
-                        'address' => [
-                            'lastName' => $order->getCustomer()->getLastName(),
-                            'firstName' => $order->getCustomer()->getFirstName(),
-                            'line2' => $order->getShippingAddress()->getStreet(),
-                            'countryCode' => $order->getShippingAddress()->getCountryCode(),
-                            'city' => $order->getShippingAddress()->getCity(),
-                            'zipCode' => $order->getShippingAddress()->getPostcode(),
-                        ],
+        $params = [
+            'contractNumber' => $transporter->getAccountNumber(),
+            'password' => $transporter->getPassword(),
+            'outputFormat' => ['x' => 0, 'y' => 0, 'outputPrintingType' => $outputPrintingType],
+            'letter' => [
+                'service' => [
+                    'productCode' => $serviceCode,
+                    'depositDate' => $depositDate,
+                    'orderNumber' => $order->getNumber(),
+                ],
+                'parcel' => ['weight' => $label->getTotalWeight()],
+                'sender' => [
+                    'address' => [
+                        'companyName' => $channel->getShopBillingData()->getCompany(),
+                        'line2' => $channel->getShopBillingData()->getStreet(),
+                        'countryCode' => $channel->getShopBillingData()->getCountryCode(),
+                        'city' => $channel->getShopBillingData()->getCity(),
+                        'zipCode' => $channel->getShopBillingData()->getPostcode(),
                     ],
                 ],
-            ];
-        }
+                'addressee' => [
+                    'address' => [
+                        'lastName' => $order->getCustomer()->getLastName(),
+                        'firstName' => $order->getCustomer()->getFirstName(),
+                        'line2' => $order->getShippingAddress()->getStreet(),
+                        'countryCode' => $order->getShippingAddress()->getCountryCode(),
+                        'city' => $order->getShippingAddress()->getCity(),
+                        'zipCode' => $order->getShippingAddress()->getPostcode(),
+                    ],
+                ],
+            ],
+        ];
 
         // pickup point
         if ($serviceCode === 'A2P' || $serviceCode === 'BPR' || $serviceCode === 'ACP' || $serviceCode === 'CDI' || $serviceCode === 'CMT' || $serviceCode === 'BDP' || $serviceCode === 'PCS') {
@@ -81,21 +86,25 @@ final class ColissimoRequest extends AbstractController
         }
         define('SERVER_NAME', 'https://ws.colissimo.fr');
 
-        //+ Generate SOAPRequest
-        $xml = new \SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" />');
-        $xml->addChild('soapenv:Header');
-        $children = $xml->addChild('soapenv:Body');
-        $children = $children->addChild('sls:generateLabel', null, 'http://sls.ws.coliposte.fr');
-        $children = $children->addChild('generateLabelRequest', null, '');
-        if ($serviceCode !== 'COM' && $serviceCode !== 'CDS') {
-            $this->array_to_xml($params, $children);
-        } else {
-            $this->array_to_xml([], $children);
-        }
-
         if ($serviceCode === 'COM' || $serviceCode === 'CDS') {
             // Add Article to CN23 mandatory to Internationnal
-            $XmlArray = new \SimpleXMLElement($xml->asXML());
+            $phoneNumber = $channel->getContactPhoneNumber() ? $channel->getContactPhoneNumber() : "0600000000";
+            $email = $channel->getContactEmail() ? $channel->getContactEmail() : "test@gmail.com";
+            $addresseePhoneNumber = $order->getShippingAddress()->getPhoneNumber() ? $order->getShippingAddress()->getPhoneNumber() : "0600000000";
+            $addresseeEmail = $order->getCustomer()->getEmail();
+            $returnTypeChoice = "2"; // Return to the sender as priority parcel. "3" to not return to the sender
+            $includeCustomsDeclarations = "1"; // include CN23 generation. "0" to not include it
+            $categoryValue = "3"; // business shipment
+            $invoiceNumber = "xxx00000"; // if invoice missing
+            $hsCode = "841391"; // depend on type of product
+
+            // build query
+
+            $xml = new \SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" />');
+            $xml->addChild('soapenv:Header');
+            $children = $xml->addChild('soapenv:Body');
+            $children = $children->addChild('sls:generateLabel', null, 'http://sls.ws.coliposte.fr');
+            $children = $children->addChild('generateLabelRequest', null, '');
             $children->addChild('contractNumber', $transporter->getAccountNumber());
             $children->addChild('password', $transporter->getPassword());
             $outputFormat = $children->addChild('outputFormat');
@@ -104,29 +113,32 @@ final class ColissimoRequest extends AbstractController
             $service = $letter->addChild('service');
             $service->addChild('productCode', $serviceCode);
             $service->addChild('depositDate', $depositDate);
-            $service->addChild('transportationAmount', 1750);
+            $service->addChild('transportationAmount', (string)$shippingCosts);
+            $service->addChild('totalAmount', (string)$order->getTotal());
             $service->addChild('orderNumber', $order->getNumber());
-            $service->addChild('returnTypeChoice', 2);
+            $service->addChild('commercialName', "");
+            $service->addChild('returnTypeChoice', $returnTypeChoice);
             $parcel = $letter->addChild('parcel');
-            $parcel->addChild('weight', $label->getTotalWeight());
+            $parcel->addChild('weight', (string)$label->getTotalWeight());
             $customsDeclarations = $letter->addChild('customsDeclarations');
-            $customsDeclarations->addChild('includeCustomsDeclarations', 1);
+            $customsDeclarations->addChild('includeCustomsDeclarations', $includeCustomsDeclarations);
             $contents = $customsDeclarations->addChild('contents');
-            /** @var LabelItem $item */
-            foreach ($label->getLabelItems() as $item) {
+            /** @var LabelItem $labelItem */
+            foreach ($label->getLabelItems() as $labelItem) {
+                $itemDescription = $labelItem->getOrderItem()->getVariant()->getProduct()->getTranslation()->getDescription() ? $labelItem->getOrderItem()->getVariant()->getProduct()->getTranslation()->getDescription() : "description";
+                $itemPrice = number_format($labelItem->getOrderItem()->getUnitPrice() / 100, 2, '.', ',');
                 $article = $contents->addChild('article');
-                if ($item->getOrderItem()->getVariant()->getProduct()->getTranslation()->getDescription()) {
-                    $article->addChild('description', $item->getOrderItem()->getVariant()->getProduct()->getTranslation()->getDescription());
-                }
-                $article->addChild('quantity', $item->getQuantity());
-                $article->addChild('weight', $item->getWeight());
-                $article->addChild('value', $item->getOrderItem()->getVariant()->getChannelPricingForChannel($channel)?->getPrice());
-                $article->addChild('hsCode', 841391);
+                $article->addChild('description', $itemDescription ? $itemDescription : "description");
+                $article->addChild('quantity', (string)$labelItem->getQuantity());
+                $article->addChild('weight', (string)$labelItem->getWeight());
+                $article->addChild('value', $itemPrice);
+                $article->addChild('hsCode', $hsCode);
                 $article->addChild('originCountry', $channel->getShopBillingData()->getCountryCode());
-                $article->addChild('currency', 'EUR');
+                $article->addChild('currency', $channel->getBaseCurrency()->getCode());
             }
             $category = $contents->addChild('category');
-            $category->addChild('value', '3');
+            $category->addChild('value', $categoryValue);
+            $invoice = $customsDeclarations->addChild('invoiceNumber', $invoiceNumber);
             $sender = $letter->addChild('sender');
             $senderAddress = $sender->addChild('address');
             $senderAddress->addChild('companyName', $channel->getShopBillingData()->getCompany());
@@ -134,14 +146,18 @@ final class ColissimoRequest extends AbstractController
             $senderAddress->addChild('countryCode', $channel->getShopBillingData()->getCountryCode());
             $senderAddress->addChild('city', $channel->getShopBillingData()->getCity());
             $senderAddress->addChild('zipCode', $channel->getShopBillingData()->getPostcode());
+            $senderAddress->addChild('phoneNumber', $phoneNumber);
+            $senderAddress->addChild('email', $email);
             $addressee = $letter->addChild('addressee');
             $addresseeAddress = $addressee->addChild('address');
-            $addresseeAddress->addChild('lastName', $order->getCustomer()->getLastName());
-            $addresseeAddress->addChild('firstName', $order->getCustomer()->getFirstName());
-            $addresseeAddress->addChild('line2', $order->getShippingAddress()->getStreet());
-            $addresseeAddress->addChild('countryCode', 'GF');
-            $addresseeAddress->addChild('city', 'Cayenne');
-            $addresseeAddress->addChild('zipCode', '97300');
+            $addresseeAddress->addChild('lastName', $params['letter']['addressee']['address']['lastName']);
+            $addresseeAddress->addChild('firstName', $params['letter']['addressee']['address']['firstName']);
+            $addresseeAddress->addChild('line2', $params['letter']['addressee']['address']['line2']);
+            $addresseeAddress->addChild('countryCode', $params['letter']['addressee']['address']['countryCode']);
+            $addresseeAddress->addChild('city', $params['letter']['addressee']['address']['city']);
+            $addresseeAddress->addChild('zipCode', $params['letter']['addressee']['address']['zipCode']);
+            $addresseeAddress->addChild('phoneNumber', $addresseePhoneNumber);
+            $addresseeAddress->addChild('email', $addresseeEmail);
             if ($serviceCode === 'CDS') {
                 $fields = $children->addChild('fields');
                 $length = $fields->addChild('field');
@@ -155,7 +171,21 @@ final class ColissimoRequest extends AbstractController
                 $height->addChild('value', '50');
             }
         }
+        else {
+            //+ Generate SOAPRequest
+            $xml = new \SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" />');
+            $xml->addChild('soapenv:Header');
+            $children = $xml->addChild('soapenv:Body');
+            $children = $children->addChild('sls:generateLabel', null, 'http://sls.ws.coliposte.fr');
+            $children = $children->addChild('generateLabelRequest', null, '');
+        }
 
+
+        if ($serviceCode !== 'COM' && $serviceCode !== 'CDS') {
+            $this->array_to_xml($params, $children);
+        } else {
+            $this->array_to_xml([], $children);
+        }
         $requestSoap = $xml->asXML();
 
         //+ Call Web Service
@@ -164,7 +194,6 @@ final class ColissimoRequest extends AbstractController
         if ($serviceCode !== 'COM' && $serviceCode !== 'CDS') {
             $response['params'] = $params;
         }
-
         return $response;
     }
 

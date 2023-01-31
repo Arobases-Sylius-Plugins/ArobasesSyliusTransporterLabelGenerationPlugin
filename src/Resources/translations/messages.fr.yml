@@ -37,6 +37,8 @@ arobases_sylius_transporter_label_generation_plugin:
         tracking_number: Numéro de suivi
     label:
         simple_label: Etiquette aller
+        cn23: CN23
+        tracking_number: Numéro de tracking
     transporter:
         go: Aller sur ce transporteur
         account_number: Numéro client

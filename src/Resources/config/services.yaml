@@ -26,6 +26,7 @@ services:
       - '@arobases_sylius_transporter_label_generation_plugin.repository.transporter'
       - '@arobases.transporter_label_generation.connector.api.colissimo'
       - '@sylius.context.channel'
+      - '@Sylius\Bundle\CoreBundle\Doctrine\ORM\ShipmentRepository'
       - '%kernel.project_dir%/public/'
       - 'upload/label/colissimo/'
 
