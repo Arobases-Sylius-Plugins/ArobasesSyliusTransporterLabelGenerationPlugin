@@ -25,8 +25,8 @@ final class TransporterProductCodeType extends AbstractType
                 'label' => false,
                 'choices' => $productCodes,
             ])
-            ->add('shippingMethod', HiddenType::class, [
-                'data' => $options['shippingMethodId'],
+            ->add('shipmentId', HiddenType::class, [
+                'data' => $options['shipmentId'],
             ])
             ->add('transporterId', HiddenType::class, [
                 'data' => $options['transporterId'],
@@ -41,7 +41,7 @@ final class TransporterProductCodeType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
-            'shippingMethodId' => null,
+            'shipmentId' => null,
             'transporterId' => null,
             'orderId' => null,
         ]);

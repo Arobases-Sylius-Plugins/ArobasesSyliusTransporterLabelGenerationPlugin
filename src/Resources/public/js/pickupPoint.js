@@ -41,7 +41,7 @@ function showMap() {
   let listPointsContainer = document.getElementById('list_points');
 
   let data = {
-    shipping_method_selected_code:  listPointsContainer.dataset.shippingMethodId,
+    shipment_selected_code:  listPointsContainer.dataset.shipmentId,
     order_id: listPointsContainer.dataset.orderId,
     transporter_code: listPointsContainer.dataset.transporterCode
   };

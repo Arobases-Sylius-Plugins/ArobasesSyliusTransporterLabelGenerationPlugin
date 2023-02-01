@@ -23,7 +23,7 @@ final class ColissimoRequest extends AbstractController
         foreach ($adjustmentShipping as $adjustment) {
             $shippingCosts += $adjustment->getAmount();
         }
-        $serviceCode = $order->getShipments()->last()->getMethod()?->getTransporterCode();
+        $serviceCode = $order->getShipments()->last()?->getTransporterCode();
         if (!$serviceCode) {
             $serviceCode = 'DOM';
         }
@@ -212,8 +212,8 @@ final class ColissimoRequest extends AbstractController
         ]);
 
         $params = [
-            'accountNumber' => 'Arobases2022',
-            'password' => 'aro@2022!Sylius',
+            'accountNumber' => $transporter->getAccountNumber(),
+            'password' => $transporter->getPassword(),
             'address' => $address->getStreet(),
             'zipCode' => $address->getPostcode(),
             'city' => $address->getCity(),

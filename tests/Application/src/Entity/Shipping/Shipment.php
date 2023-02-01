@@ -6,12 +6,12 @@ namespace Tests\Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Shipping;
 
 use Arobases\SyliusTransporterLabelGenerationPlugin\Entity\TransporterTrait;
 use Doctrine\ORM\Mapping as ORM;
-use Sylius\Component\Core\Model\ShippingMethod as BaseShippingMethod;
+use Sylius\Component\Core\Model\Shipment as BaseShipment;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="sylius_shipping_method")
+ * @ORM\Table(name="sylius_shipment")
  */
-class ShippingMethod extends BaseShippingMethod {
+class Shipment extends BaseShipment {
     use TransporterTrait;
 }

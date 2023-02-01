@@ -12,7 +12,9 @@ use Sylius\Bundle\AddressingBundle\Form\Type\AddressType;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderRepository;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\ShippingMethodRepository;
 use Sylius\Component\Core\Model\Order;
+use Sylius\Component\Core\Model\Shipment;
 use Sylius\Component\Core\Model\ShippingMethod;
+use Sylius\Component\Core\Repository\ShipmentRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -21,21 +23,20 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Tests\Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Addressing\Address;
 
-final class TransporterShippingMethodsController extends AbstractController
+final class TransporterShipmentsController extends AbstractController
 {
     public function __construct(
         private TransporterRepository $transporterRepository,
-        private ShippingMethodRepository $shippingMethodRepository,
+        private ShipmentRepositoryInterface $shipmentRepository,
         private EntityManagerInterface $entityManager,
         private ColissimoRequest $colissimoRequest,
         private OrderRepository $orderRepository,
-    ) {
-    }
+    ) {}
 
     public function renderUpdateForm(Request $request): Response
     {
         $transporterId = $request->query->get('transporterId');
-        $shippingMethodId = $request->query->get('shippingMethodId');
+        $shipmentId = $request->query->get('shipmentId');
         $orderId = $request->query->get('orderId');
 
         if ($transporterId && $transporterId !== '') {
@@ -44,7 +45,7 @@ final class TransporterShippingMethodsController extends AbstractController
             $transporter = null;
         }
 
-        $form = $this->createForm(TransporterProductCodeType::class, null, ['shippingMethodId' => $shippingMethodId, 'transporterId' => $transporterId, 'orderId' => $orderId]);
+        $form = $this->createForm(TransporterProductCodeType::class, null, ['shipmentId' => $shipmentId, 'transporterId' => $transporterId, 'orderId' => $orderId]);
 
         return $this->render('@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Show/_product_codes_form.html.twig', [
             'form' => $form->createView(),
@@ -52,27 +53,27 @@ final class TransporterShippingMethodsController extends AbstractController
         ]);
     }
 
-    public function updateShippingMethodProductCode(Request $request): RedirectResponse
+    public function updateShipmentProductCode(Request $request): RedirectResponse
     {
         /** @var FlashBagInterface $flashBag */
         $flashBag = $request->getSession()->getBag('flashes');
 
-        $shippingMethodId = $request->request->get('arobases_sylius_transporter_label_generation_product_code')['shippingMethod'];
+        $shipmentId = $request->request->get('arobases_sylius_transporter_label_generation_product_code')['shipmentId'];
         $transporterCode = $request->request->get('arobases_sylius_transporter_label_generation_product_code')['transporterCode'];
         $transporterId = $request->request->get('arobases_sylius_transporter_label_generation_product_code')['transporterId'];
         $orderId = $request->request->get('arobases_sylius_transporter_label_generation_product_code')['orderId'];
-        /** @var ShippingMethod $shippingMethod */
-        $shippingMethod = $this->shippingMethodRepository->find($shippingMethodId);
-        if (!$shippingMethod) {
+        /** @var Shipment $shipment */
+        $shipment = $this->shipmentRepository->find($shipmentId);
+        if (!$shipment) {
             $flashBag->add('update-shipping-method-error', 'arobases_sylius_transporter_label_generation_plugin.flashbag.error');
         } else {
-            $shippingMethod->setTransporterCode($transporterCode);
-            $this->entityManager->persist($shippingMethod);
+            $shipment->setTransporterCode($transporterCode);
+            $this->entityManager->persist($shipment);
             $this->entityManager->flush();
 
             // choose pick up point
             if ($transporterCode === 'A2P' || $transporterCode === 'BPR' || $transporterCode === 'CDI' || $transporterCode === 'CMT' || $transporterCode === 'BDP' || $transporterCode === 'PCS' || $transporterCode === 'ACP') {
-                return $this->redirectToRoute('arobases_sylius_transporter_label_generation_plugin_render_pickup_point_map', ['shippingMethodId' => $shippingMethod->getId(), 'orderId' => $orderId, 'transporterCode' => $transporterCode]);
+                return $this->redirectToRoute('arobases_sylius_transporter_label_generation_plugin_render_pickup_point_map', ['shipmentId' => $shipment->getId(), 'orderId' => $orderId, 'transporterCode' => $transporterCode]);
             }
             $flashBag->add('update-shipping-method-success', 'arobases_sylius_transporter_label_generation_plugin.flashbag.error');
         }
@@ -84,8 +85,8 @@ final class TransporterShippingMethodsController extends AbstractController
     {
         /** @var Order $order */
         $order = $this->orderRepository->find($request->query->get('orderId'));
-        /** @var ShippingMethod $shippingMethod */
-        $shippingMethod = $this->shippingMethodRepository->find($request->query->get('shippingMethodId'));
+        /** @var Shipment $shipment */
+        $shipment = $this->shipmentRepository->find($request->query->get('shipmentId'));
         $transporterCode = $request->query->get('transporterCode');
 
         $newAddress = new Address();
@@ -100,12 +101,12 @@ final class TransporterShippingMethodsController extends AbstractController
             $this->entityManager->flush();
 
             if ($request->request->get('is_pickup_point') === 'true') {
-                return $this->redirectToRoute('arobases_sylius_transporter_label_generation_plugin_admin_transporter_show', ['id' => $shippingMethod->getTransporter()->getId()]);
+                return $this->redirectToRoute('arobases_sylius_transporter_label_generation_plugin_admin_transporter_show', ['id' => $shipment->getTransporter()->getId()]);
             }
 
             return $this->render('@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/choose_pickup_point.html.twig', [
                 'order' => $order,
-                'shippingMethod' => $shippingMethod,
+                'shipment' => $shipment,
                 'addressForm' => $addressForm->createView(),
                 'transporterCode' => $transporterCode,
             ]);
@@ -113,7 +114,7 @@ final class TransporterShippingMethodsController extends AbstractController
 
         return $this->render('@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/choose_pickup_point.html.twig', [
             'order' => $order,
-            'shippingMethod' => $shippingMethod,
+            'shipment' => $shipment,
             'addressForm' => $addressForm->createView(),
             'transporterCode' => $transporterCode,
         ]);
@@ -122,25 +123,25 @@ final class TransporterShippingMethodsController extends AbstractController
     public function choosePickPointAjax(Request $request): JsonResponse
     {
         $orderId = $request->request->get('order_id');
-        $shippingMethodId = $request->request->get('shipping_method_selected_code');
+        $shipmentId = $request->request->get('shipment_selected_code');
         $transporterCode = $request->request->get('transporter_code');
-        if (!$orderId || !$shippingMethodId) {
+        if (!$orderId || !$shipmentId) {
             return new JsonResponse('La sélection du point relais a échoué', Response::HTTP_BAD_REQUEST);
         }
         /** @var Order $order */
         $order = $this->orderRepository->find($orderId);
-        /** @var ShippingMethod $shippingMethod */
-        $shippingMethod = $this->shippingMethodRepository->find($shippingMethodId);
-        if (!$order || !$shippingMethod) {
+        /** @var Shipment $shipment */
+        $shipment = $this->shipmentRepository->find($shipmentId);
+        if (!$order || !$shipment) {
             return new JsonResponse('La sélection du point relais a échoué', Response::HTTP_BAD_REQUEST);
         }
-        $transporter = $shippingMethod->getTransporter();
+        $transporter = $shipment->getTransporter();
         if (!$transporter) {
             return new JsonResponse('La sélection du point relais a échoué', Response::HTTP_BAD_REQUEST);
         }
 
         $listPoints = [];
-        if (strtolower($shippingMethod->getTransporter()->getName()) === 'colissimo') { //colissimo
+        if (strtolower($shipment->getTransporter()->getName()) === 'colissimo') { //colissimo
             $colissimoResponse = $this->colissimoRequest->getPickupPoints($order, 1, $transporter);
             if ($colissimoResponse['errorCode'] !== 0) {
                 return new JsonResponse($colissimoResponse['errorMessage'], Response::HTTP_BAD_REQUEST);

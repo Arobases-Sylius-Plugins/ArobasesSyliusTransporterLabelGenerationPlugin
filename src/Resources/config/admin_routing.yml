@@ -97,22 +97,22 @@ arobases_sylius_transporter_label_generation_plugin_admin_render_update_transpor
   path: /render-update-form
   methods: [GET]
   defaults:
-    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShippingMethodsController::renderUpdateForm
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShipmentsController::renderUpdateForm
 
-arobases_sylius_transporter_label_generation_plugin_admin_update_transporter_shipping_method:
+arobases_sylius_transporter_label_generation_plugin_admin_update_transporter_shipment:
   path: /update-shipping-method
   methods: [POST]
   defaults:
-    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShippingMethodsController::updateShippingMethodProductCode
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShipmentsController::updateShipmentProductCode
 
 arobases_sylius_transporter_label_generation_plugin_render_pickup_point_map:
   path: /render-pickup-point-map
   methods: [GET, POST]
   defaults:
-    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShippingMethodsController::renderPickupPointMap
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShipmentsController::renderPickupPointMap
 
 arobases_sylius_transporter_label_generation_plugin_admin_choose_pickup_point_ajax:
   path: /choose-pickup-point
   methods: [POST]
   defaults:
-    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShippingMethodsController::choosePickPointAjax
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShipmentsController::choosePickPointAjax

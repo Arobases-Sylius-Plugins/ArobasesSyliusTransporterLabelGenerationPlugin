@@ -38,15 +38,15 @@ imports:
 
 ### Step 5: Include Traits
 
-override ShippingMethod entity to include TransporterTrait
+override Shipment entity to include TransporterTrait
 ```bash
-# Entity/Shipping/ShippingMethod.php
+# Entity/Shipping/Shipment.php
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="sylius_shipping_method")
+ * @ORM\Table(name="sylius_shipment")
  */
-class ShippingMethod extends BaseShippingMethod {
+class Shipment extends BaseShipment {
     use TransporterTrait;
 }
 ```
@@ -97,14 +97,17 @@ override OrderRepository or add it 'findByShippingMethod'
 
 public function findByShippingMethod($transporterId): QueryBuilder
 {
-$qb = $this->createQueryBuilder('o')
-->leftJoin('o.shipments', 'shipment')
-->leftJoin('shipment.method', 'shippingMethod')
-->leftJoin('shippingMethod.transporter', 'transporter')
-->andWhere('transporter.id = :transporterId')
-->setParameter('transporterId', $transporterId)
-;
-return $qb;
+  $qb = $this->createQueryBuilder('o')
+    ->leftJoin('o.shipments', 'shipment')
+    ->leftJoin('shipment.transporter', 'transporter')
+    ->andWhere('transporter.id = :transporterId')
+    ->andWhere('o.shippingState IN (:shippingState)')
+    ->andWhere('o.paymentState IN (:paymentState)')
+    ->setParameter('transporterId', $transporterId)
+    ->setParameter('shippingState', ["ready", "shipped", "in_preparation"])
+    ->setParameter('paymentState', ["paid"])
+        ;
+    return $qb;
 }
 ```
 

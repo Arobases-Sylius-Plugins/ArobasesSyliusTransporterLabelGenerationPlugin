@@ -71,7 +71,7 @@ final class OrderLabelController extends AbstractController
 
         /** @var Shipment $shipment */
         $shipment = $this->shipmentRepository->findOneBy(['order' => $order]);
-        $transporterId = $shipment->getMethod()->getTransporter()?->getId();
+        $transporterId = $shipment->getTransporter()?->getId();
 
         $html = $this->render('@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Show/_order_details.html.twig', ['order' => $order, 'shippingCosts' => $shippingCosts, 'totalWeight' => $totalWeight, 'transporterId' => $transporterId])->getContent();
 

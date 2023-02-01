@@ -9,16 +9,17 @@ use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderRepository as BaseOrderRepository
 
 class OrderRepository extends BaseOrderRepository
 {
-    public function findByShippingMethod($transporterId): QueryBuilder
+    public function findByShipment($transporterId): QueryBuilder
     {
         $qb = $this->createQueryBuilder('o')
             ->leftJoin('o.shipments', 'shipment')
-            ->leftJoin('shipment.method', 'shippingMethod')
-            ->leftJoin('shippingMethod.transporter', 'transporter')
-            ->andWhere('transporter.id IN (:transporterId)')
+            ->leftJoin('shipment.transporter', 'transporter')
+            ->andWhere('transporter.id = :transporterId')
             ->andWhere('o.shippingState IN (:shippingState)')
+            ->andWhere('o.paymentState IN (:paymentState)')
             ->setParameter('transporterId', $transporterId)
             ->setParameter('shippingState', ["ready", "shipped", "in_preparation"])
+            ->setParameter('paymentState', ["paid"])
         ;
         return $qb;
     }

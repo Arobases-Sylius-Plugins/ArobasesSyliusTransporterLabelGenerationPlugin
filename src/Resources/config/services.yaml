@@ -30,14 +30,14 @@ services:
       - '%kernel.project_dir%/public/'
       - 'upload/label/colissimo/'
 
-  Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShippingMethodsController:
+  Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShipmentsController:
     tags:
       - { name: controller.service_arguments }
     calls:
       - [ setContainer, [ "@service_container" ] ]
     arguments:
       - '@arobases_sylius_transporter_label_generation_plugin.repository.transporter'
-      - '@sylius.repository.shipping_method'
+      - '@sylius.repository.shipment'
       - '@doctrine.orm.entity_manager'
       - '@arobases.transporter_label_generation.connector.api.colissimo'
       - '@sylius.repository.order'

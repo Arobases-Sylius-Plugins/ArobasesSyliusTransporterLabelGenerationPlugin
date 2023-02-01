@@ -7,7 +7,7 @@ namespace Arobases\SyliusTransporterLabelGenerationPlugin\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Sylius\Component\Core\Model\ShippingMethod;
+use Sylius\Component\Core\Model\Shipment;
 use Sylius\Component\Resource\Model\ResourceInterface;
 
 /**
@@ -35,12 +35,12 @@ class Transporter implements ResourceInterface
     /** @ORM\Column(name="default_output_printing_type", type="string", nullable=true) */
     private ?string $defaultOutputPrintingType = null;
 
-    /** @ORM\OneToMany(targetEntity="Sylius\Component\Core\Model\ShippingMethodInterface", mappedBy="transporter", cascade={"persist", "remove"}) */
-    private Collection $shippingMethods;
+    /** @ORM\OneToMany(targetEntity="Sylius\Component\Core\Model\ShipmentInterface", mappedBy="transporter", cascade={"persist", "remove"}) */
+    private Collection $shipments;
 
     public function __construct()
     {
-        $this->shippingMethods = new ArrayCollection();
+        $this->shipments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -88,26 +88,26 @@ class Transporter implements ResourceInterface
         $this->defaultOutputPrintingType = $defaultOutputPrintingType;
     }
 
-    public function getShippingMethods(): Collection
+    public function getShipments(): Collection
     {
-        return $this->shippingMethods;
+        return $this->shipments;
     }
 
-    public function addShippingMethod(ShippingMethod $shippingMethod): self
+    public function addShipment(Shipment $shipment): self
     {
-        if (!$this->shippingMethods->contains($shippingMethod)) {
-            $this->shippingMethods[] = $shippingMethod;
-            $shippingMethod->setTransporter($this);
+        if (!$this->shipments->contains($shipment)) {
+            $this->shipments[] = $shipment;
+            $shipment->setTransporter($this);
         }
 
         return $this;
     }
 
-    public function removeShippingMethod(ShippingMethod $shippingMethod): self
+    public function removeShippingMethod(Shipment $shipment): self
     {
-        if ($this->shippingMethods->removeElement($shippingMethod)) {
-            if ($shippingMethod->getTransporter() === $this) {
-                $shippingMethod->setTransporter(null);
+        if ($this->shipments->removeElement($shipment)) {
+            if ($shipment->getTransporter() === $this) {
+                $shipment->setTransporter(null);
             }
         }
 

@@ -1,5 +1,5 @@
 <div class="update-shipping-method-form" data-transporter-name="{{ transporter.name }}">
-    {{ form_start(form, {action:path('arobases_sylius_transporter_label_generation_plugin_admin_update_transporter_shipping_method')}) }}
+    {{ form_start(form, {action:path('arobases_sylius_transporter_label_generation_plugin_admin_update_transporter_shipment')}) }}
     {{ form_row(form.transporterCode) }}
     <button type="submit" class="button icon primary ui">{{ 'arobases_sylius_transporter_label_generation_plugin.ui.update'|trans }}</button>
     {{ form_end(form) }}

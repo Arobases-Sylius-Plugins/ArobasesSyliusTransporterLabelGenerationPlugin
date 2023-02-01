@@ -16,9 +16,9 @@ sylius_shop:
 
 sylius_shipping:
     resources:
-        shipping_method:
+        shipment:
             classes:
-                model: Tests\Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Shipping\ShippingMethod
+                model: Tests\Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Shipping\Shipment
 sylius_order:
     resources:
         order:

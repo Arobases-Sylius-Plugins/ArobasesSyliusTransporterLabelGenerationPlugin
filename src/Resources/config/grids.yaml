@@ -26,7 +26,7 @@ sylius_grid:
         options:
           class: '%sylius.model.order.class%'
           repository:
-            method: findByShippingMethod
+            method: findByShipment
             arguments:
               - $id
       sorting:
@@ -56,7 +56,7 @@ sylius_grid:
           type: twig
           label: sylius.ui.shipping_method
           options:
-            template: "@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Grid/Field/shipping_method.html.twig"
+            template: "@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/Grid/Field/shipment.html.twig"
         shipping_address:
           type: twig
           label: sylius.ui.country
