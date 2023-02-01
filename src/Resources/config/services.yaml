@@ -55,9 +55,9 @@ services:
   ###############################  BEGIN FORM ###############################
 
   arobases.transporter_label_generation.form.shipping_method:
-    class: Arobases\SyliusTransporterLabelGenerationPlugin\Form\Extension\ShippingMethodTypeExtension
+    class: Arobases\SyliusTransporterLabelGenerationPlugin\Form\Extension\ShipmentTypeExtension
     tags:
-      - { name: form.type_extension, extended_type: Sylius\Bundle\ShippingBundle\Form\Type\ShippingMethodType }
+      - { name: form.type_extension, extended_type: Sylius\Bundle\ShippingBundle\Form\Type\ShipmentType }
     arguments:
       - '@arobases.transporter_label_generation.provider.transporter_product_code'
 

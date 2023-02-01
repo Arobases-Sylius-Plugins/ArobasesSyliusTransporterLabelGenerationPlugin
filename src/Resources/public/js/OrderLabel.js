@@ -140,11 +140,10 @@ class OrderLabel {
                 processData: false,
                 contentType: false,
                 success: function (response) {
-                    console.log(response)
                     t.renderLabelSummary(form.closest('.order-details-container'));
                 },
-                error: function (jqXHR, responseText, errorThrown) {
-                    alert(responseText ? responseText : errorThrown );
+                error: function (response) {
+                    alert(response.responseJson ? response.responseJson : "error" );
                 }
             });
         }

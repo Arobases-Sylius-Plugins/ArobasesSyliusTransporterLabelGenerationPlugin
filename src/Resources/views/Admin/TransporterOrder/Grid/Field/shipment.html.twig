@@ -2,7 +2,7 @@
     {% for shipment in data %}
         <div data-transporter-code="{{ shipment.transporterCode }}">
             {% set shipmentId = shipment.id %}
-            {{ render(url('arobases_sylius_transporter_label_generation_plugin_admin_render_update_transporter_shipping_method_form', {transporterId: shipment.transporter.id, shipmentId: shipmentId, orderId: shipment.order.id})) }}
+            {{ render(url('arobases_sylius_transporter_label_generation_plugin_admin_render_update_transporter_shipment_form', {transporterId: shipment.transporter.id, shipmentId: shipmentId, orderId: shipment.order.id})) }}
         </div>
     {% endfor %}
 {% endif %}

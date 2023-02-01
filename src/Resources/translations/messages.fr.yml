@@ -45,7 +45,7 @@ arobases_sylius_transporter_label_generation_plugin:
         password: Mot de passe
         default_output_printing_type: Format d'étiquettes par défaut
     form:
-        shipping_method:
+        shipment:
             transporter: Transporteur
             transporter_code: Code du service de transporter
         update_order_address: Modifier l'adresse de la commande

@@ -93,14 +93,14 @@ arobases_sylius_transporter_label_generation_plugin_admin_label_delete_ajax:
   defaults:
     _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\OrderLabelController::deleteLabelAjax
 
-arobases_sylius_transporter_label_generation_plugin_admin_render_update_transporter_shipping_method_form:
+arobases_sylius_transporter_label_generation_plugin_admin_render_update_transporter_shipment_form:
   path: /render-update-form
   methods: [GET]
   defaults:
     _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShipmentsController::renderUpdateForm
 
 arobases_sylius_transporter_label_generation_plugin_admin_update_transporter_shipment:
-  path: /update-shipping-method
+  path: /update-shipment
   methods: [POST]
   defaults:
     _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShipmentsController::updateShipmentProductCode

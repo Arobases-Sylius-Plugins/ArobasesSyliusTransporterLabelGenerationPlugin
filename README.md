@@ -73,7 +73,7 @@ override Product entity to include HsCodeTrait and add the field to your form
  * @ORM\Entity
  * @ORM\Table(name="sylius_product")
  */
-class ShippingMethod extends BaseProduct {
+class Product extends BaseProduct {
     use HsCodeTrait;
 }
 ```
@@ -91,11 +91,11 @@ class ShippingMethod extends BaseProduct {
 {{ form_row(form.hsCode) }}
 ```
 
-override OrderRepository or add it 'findByShippingMethod'
+override OrderRepository or add it 'findByShipment'
 ```bash
 # OrderRepository.php
 
-public function findByShippingMethod($transporterId): QueryBuilder
+public function findByShipment($transporterId): QueryBuilder
 {
   $qb = $this->createQueryBuilder('o')
     ->leftJoin('o.shipments', 'shipment')

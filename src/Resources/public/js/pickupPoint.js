@@ -155,7 +155,6 @@ function showMap() {
         content += "				<div><strong>"+point.nom+"</strong></div>";
         content += "				<div>"+point.adresse1+"</div>";
         content += "				<div>"+point.codePostal+" "+point.localite+"</div>";
-        // content += "				<div><span class='point_map_item ui button primary icon small' data-id='"+point.identifiant+"' data-index='"+i+"'>Choisir ce point</span></div>";
         content += "			</td>";
         content += "		</tr>";
         content += "	</table>";
@@ -185,8 +184,8 @@ function showMap() {
 
       initEvent();
     },
-    error: function(jqXHR, responseText, errorThrown) {
-      alert(responseText ? responseText : errorThrown)
+    error: function(response) {
+      alert(response.responseJSON ? response.responseJSON : "error")
     }
   });
 }
