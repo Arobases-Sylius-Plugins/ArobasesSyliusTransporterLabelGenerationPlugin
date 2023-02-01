@@ -16,6 +16,7 @@ arobases_sylius_transporter_label_generation_plugin:
         update: Modifier
         submit_pickup_point: Valider ce point relais
         ready: Prêt
+        error_message_hs_code: Attention, tous les codes sh des produits de cette commande n'ont pas été remplis. Un code par défaut sera inscrit sur l'étiquette si les codes sh ne sont pas rempli.
     order:
         details: Détails de la commande
         total_ttc: Total TTC

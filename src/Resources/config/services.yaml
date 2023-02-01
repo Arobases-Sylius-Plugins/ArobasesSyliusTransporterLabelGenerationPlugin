@@ -41,16 +41,19 @@ services:
       - '@doctrine.orm.entity_manager'
       - '@arobases.transporter_label_generation.connector.api.colissimo'
       - '@sylius.repository.order'
-      - '@session.flash_bag'
+      - '@Symfony\Component\Form\FormFactoryInterface'
 
   ###############################  BEGIN TWIG EXTENSION ###############################
 
-  arobases.transporter_label_generation.twig_extension.format_right_array:
-    class: Arobases\SyliusTransporterLabelGenerationPlugin\Twig\Extensions\CountryExtension
+  Arobases\SyliusTransporterLabelGenerationPlugin\Twig\Extensions\CountryExtension:
     public: false
     tags:
       - { name: twig.extension }
 
+  Arobases\SyliusTransporterLabelGenerationPlugin\Twig\Extensions\ProductExtension:
+    public: false
+    tags:
+      - { name: twig.extension }
 
   ###############################  BEGIN FORM ###############################
 

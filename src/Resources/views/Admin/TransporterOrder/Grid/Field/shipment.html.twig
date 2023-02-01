@@ -1,5 +1,11 @@
 {% if data and data|length > 0 %}
     {% for shipment in data %}
+        {% if shipment.transporterCode in ["COM", "CDS"] %}
+            {% set allHsCodeValid = arobases_label_generation_has_all_hs_code(shipment.order) %}
+            {% if not allHsCodeValid %}
+                <div class="error-msg">{{ "arobases_sylius_transporter_label_generation_plugin.ui.error_message_hs_code"|trans }}</div>
+            {% endif %}
+        {% endif %}
         <div data-transporter-code="{{ shipment.transporterCode }}">
             {% set shipmentId = shipment.id %}
             {{ render(url('arobases_sylius_transporter_label_generation_plugin_admin_render_update_transporter_shipment_form', {transporterId: shipment.transporter.id, shipmentId: shipmentId, orderId: shipment.order.id})) }}

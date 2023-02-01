@@ -10,18 +10,16 @@ use Arobases\SyliusTransporterLabelGenerationPlugin\Repository\TransporterReposi
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Bundle\AddressingBundle\Form\Type\AddressType;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderRepository;
-use Sylius\Bundle\CoreBundle\Doctrine\ORM\ShippingMethodRepository;
 use Sylius\Component\Core\Model\Order;
 use Sylius\Component\Core\Model\Shipment;
-use Sylius\Component\Core\Model\ShippingMethod;
 use Sylius\Component\Core\Repository\ShipmentRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Tests\Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Addressing\Address;
 
 final class TransporterShipmentsController extends AbstractController
 {
@@ -31,6 +29,7 @@ final class TransporterShipmentsController extends AbstractController
         private EntityManagerInterface $entityManager,
         private ColissimoRequest $colissimoRequest,
         private OrderRepository $orderRepository,
+        private FormFactoryInterface $formFactory
     ) {}
 
     public function renderUpdateForm(Request $request): Response
@@ -89,8 +88,7 @@ final class TransporterShipmentsController extends AbstractController
         $shipment = $this->shipmentRepository->find($request->query->get('shipmentId'));
         $transporterCode = $request->query->get('transporterCode');
 
-        $newAddress = new Address();
-        $addressForm = $this->createForm(AddressType::class, $newAddress);
+        $addressForm = $this->formFactory->create(AddressType::class);
         $addressForm->handleRequest($request);
 
         // update order address

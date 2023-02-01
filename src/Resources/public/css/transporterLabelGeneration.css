@@ -30,3 +30,5 @@
 #pickup-summary {font-weight: bold; color: #808080;}
 #updateOrderAddress {margin-top: 20px;}
 #updateOrderAddressForm button {margin: 15px 0 30px;}
+
+.error-msg {color: #db2828}
