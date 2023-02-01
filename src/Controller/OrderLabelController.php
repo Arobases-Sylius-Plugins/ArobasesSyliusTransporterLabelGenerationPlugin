@@ -91,7 +91,7 @@ final class OrderLabelController extends AbstractController
         $order = $this->orderRepository->find((int) $orderId);
         /** @var Transporter $transporter */
         $transporter = $this->transporterRepository->find((int) $transporterId);
-        
+
         if (!$order || !$transporter) {
             return new JsonResponse("order or transporter missing", Response::HTTP_BAD_REQUEST);
         }
@@ -251,6 +251,9 @@ final class OrderLabelController extends AbstractController
             return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
         }
 
+        @unlink($label->getPath());
+        if ($label->getPathCn23())
+            @unlink($label->getPathCn23());
         $this->entityManager->remove($label);
         $this->entityManager->flush();
 

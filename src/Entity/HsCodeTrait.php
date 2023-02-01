@@ -6,35 +6,26 @@ namespace Arobases\SyliusTransporterLabelGenerationPlugin\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-trait TransporterTrait
+trait HsCodeTrait
 {
-    /** @ORM\ManyToOne(targetEntity="Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Transporter", inversedBy="shippingMethods", cascade={"persist", "remove"}) */
-    private ?Transporter $transporter = null;
+    /**
+     * @ORM\Column(name="hs_code", type="string", nullable=true)
+     */
+    private ?string $hsCode = null;
 
     /**
-     * service transporter product code
-     *
-     * @ORM\Column(name="transporter_code", type="string", nullable=true)
+     * @return string|null
      */
-    private ?string $transporterCode = null;
-
-    public function getTransporter(): ?Transporter
+    public function getHsCode(): ?string
     {
-        return $this->transporter;
+        return $this->hsCode;
     }
 
-    public function setTransporter(?Transporter $transporter): void
+    /**
+     * @param string|null $hsCode
+     */
+    public function setHsCode(?string $hsCode): void
     {
-        $this->transporter = $transporter;
-    }
-
-    public function getTransporterCode(): ?string
-    {
-        return $this->transporterCode;
-    }
-
-    public function setTransporterCode(?string $transporterCode): void
-    {
-        $this->transporterCode = $transporterCode;
+        $this->hsCode = $hsCode;
     }
 }

@@ -96,7 +96,6 @@ final class ColissimoRequest extends AbstractController
             $includeCustomsDeclarations = "1"; // include CN23 generation. "0" to not include it
             $categoryValue = "3"; // business shipment
             $invoiceNumber = "xxx00000"; // if invoice missing
-            $hsCode = "841391"; // depend on type of product
 
             // build query
 
@@ -123,10 +122,13 @@ final class ColissimoRequest extends AbstractController
             $customsDeclarations = $letter->addChild('customsDeclarations');
             $customsDeclarations->addChild('includeCustomsDeclarations', $includeCustomsDeclarations);
             $contents = $customsDeclarations->addChild('contents');
+
             /** @var LabelItem $labelItem */
-            foreach ($label->getLabelItems() as $labelItem) {
+            foreach ($label->getLabelItems() as $labelItem) { // article tag
                 $itemDescription = $labelItem->getOrderItem()->getVariant()->getProduct()->getTranslation()->getDescription() ? $labelItem->getOrderItem()->getVariant()->getProduct()->getTranslation()->getDescription() : "description";
                 $itemPrice = number_format($labelItem->getOrderItem()->getUnitPrice() / 100, 2, '.', ',');
+                $hsCode = $labelItem->getOrderItem()->getProduct()->getHsCode() ? $labelItem->getOrderItem()->getProduct()->getHsCode() : "841391";
+
                 $article = $contents->addChild('article');
                 $article->addChild('description', $itemDescription ? $itemDescription : "description");
                 $article->addChild('quantity', (string)$labelItem->getQuantity());
@@ -136,6 +138,7 @@ final class ColissimoRequest extends AbstractController
                 $article->addChild('originCountry', $channel->getShopBillingData()->getCountryCode());
                 $article->addChild('currency', $channel->getBaseCurrency()->getCode());
             }
+
             $category = $contents->addChild('category');
             $category->addChild('value', $categoryValue);
             $invoice = $customsDeclarations->addChild('invoiceNumber', $invoiceNumber);

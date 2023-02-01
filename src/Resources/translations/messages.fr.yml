@@ -49,6 +49,8 @@ arobases_sylius_transporter_label_generation_plugin:
             transporter: Transporteur
             transporter_code: Code du service de transporter
         update_order_address: Modifier l'adresse de la commande
+        product:
+            hs_code: Code SH
     colissimo:
         product_code:
             DOM: Colissimo Domicile - sans signature (DOM)

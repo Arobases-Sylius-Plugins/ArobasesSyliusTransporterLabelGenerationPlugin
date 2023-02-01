@@ -65,6 +65,32 @@ class Address extends BaseAddress
 }
 ```
 
+override Product entity to include HsCodeTrait and add the field to your form
+```bash
+# Entity/Product/Product.php
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="sylius_product")
+ */
+class ShippingMethod extends BaseProduct {
+    use HsCodeTrait;
+}
+```
+```bash
+# Form/Extension/Product/ProductTypeExtension.php
+
+->add('hsCode', TextType::class,[
+        'label' => "arobases_sylius_transporter_label_generation_plugin.form.product.hs_code",
+        'required' => false
+    ])
+```
+```bash
+# Product/Tab/_details.html.twig
+
+{{ form_row(form.hsCode) }}
+```
+
 override OrderRepository or add it 'findByShippingMethod'
 ```bash
 # OrderRepository.php
@@ -96,7 +122,7 @@ bin/console sylius:theme:asset:install
 
 <h2 align="center">How it works</h2>
 
-think to allow file writting for label generation.
+!!! think to allow file writting for label generation (public/upload/label/colissimo) !!!
 
 ### Add a transporter
 
@@ -112,3 +138,5 @@ As things stand, you can add only Colissimo transporter. To add another one, ove
                 ],
             ])
 ```
+
+Create another connector service to looks like ColissimoRequest service and complete OrderLabelController.php to handle others transporters.
