@@ -2,3 +2,9 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en_US
+
+services:
+    app.form.extension.type.product:
+        class: Tests\Arobases\SyliusTransporterLabelGenerationPlugin\Form\Extension\Product\ProductTypeExtension
+        tags:
+            - { name: form.type_extension, extended_type: Sylius\Bundle\ProductBundle\Form\Type\ProductType }

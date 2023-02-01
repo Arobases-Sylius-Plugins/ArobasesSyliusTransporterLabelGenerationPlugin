@@ -30,3 +30,9 @@ sylius_addressing:
         address:
             classes:
                 model: Tests\Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Addressing\Address
+
+sylius_product:
+    resources:
+        product:
+            classes:
+                model: Tests\Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Product\Product
