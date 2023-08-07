@@ -1,4 +1,8 @@
-<h1 align="center">Transporter generation label plugin</h1>
+<h1 align="center">Arobases Sylius Transporter generation label plugin</h1>
+
+![banner_arobases](https://user-images.githubusercontent.com/39689570/219097659-e87e83d8-7a82-4c23-9544-3d7e5532c3ed.jpg)
+
+
 
 <h2 align="center">Installation</h2>
 
