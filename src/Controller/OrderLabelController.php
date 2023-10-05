@@ -66,7 +66,7 @@ final class OrderLabelController extends AbstractController
         $totalWeight = 0;
         /** @var OrderItem $item */
         foreach ($order->getItems() as $item) {
-            $totalWeight += $item->getVariant()->getWeight();
+            $totalWeight += $item->getVariant()->getWeight() * $item->getQuantity();
         }
 
         /** @var Shipment $shipment */

@@ -87,8 +87,8 @@ class OrderLabel {
                     t.init();
                 }
             },
-            error: function () {
-                alert("error");
+            error: function (response) {
+                alert(response.responseJSON ? response.responseJSON : "error" );
             }
         });
     }
@@ -143,7 +143,7 @@ class OrderLabel {
                     t.renderLabelSummary(form.closest('.order-details-container'));
                 },
                 error: function (response) {
-                    alert(response.responseJson ? response.responseJson : "error" );
+                    alert(response.responseJSON ? response.responseJSON : "error" );
                 }
             });
         }
@@ -167,8 +167,8 @@ class OrderLabel {
                     })
                 }
             },
-            error: function () {
-                alert("error");
+            error: function (response) {
+                alert(response.responseJSON ? response.responseJSON : "error" );
             }
         });
     }
@@ -187,8 +187,8 @@ class OrderLabel {
                 t.renderLabelSummary(container.closest('.order-details-container'));
                 t.init();
             },
-            error: function () {
-                alert("error");
+            error: function (response) {
+                alert(response.responseJSON ? response.responseJSON : "error" );
             }
         });
     }

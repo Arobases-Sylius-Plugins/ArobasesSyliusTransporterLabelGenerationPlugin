@@ -93,8 +93,8 @@ final class TransporterShipmentsController extends AbstractController
 
         // update order address
         if ($addressForm->isSubmitted() && $addressForm->isValid()) {
-            $this->entityManager->persist($newAddress);
-            $order->setShippingAddress($newAddress);
+            $this->entityManager->persist($addressForm);
+            $order->setShippingAddress($addressForm);
             $this->entityManager->persist($order);
             $this->entityManager->flush();
 
