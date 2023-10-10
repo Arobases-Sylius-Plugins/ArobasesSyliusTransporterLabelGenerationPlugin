@@ -87,8 +87,8 @@ class OrderLabel {
                     t.init();
                 }
             },
-            error: function (response) {
-                alert(response.responseJSON ? response.responseJSON : "error" );
+            error: function () {
+                alert("error");
             }
         });
     }
@@ -130,7 +130,7 @@ class OrderLabel {
         let formData = new FormData(form);
         formData.append("transporter", transporterId);
         if (formData.get('total_weight') === 0 || formData.get('total_weight') === "") {
-            alert("Veuillez renseigner un poids total pour l'envoi");
+            alert("Veuillez renseigner un poids total pour l'envoi.");
         }
         else {
             $.ajax({
@@ -165,10 +165,14 @@ class OrderLabel {
                             t.deleteLabel(e.target);
                         })
                     })
+                    let form = container.closest('.order-details-container').querySelector('form[name="updated-order"]');
+                    if (form) {
+                        t.updateTotalWeight(form);
+                    }
                 }
             },
-            error: function (response) {
-                alert(response.responseJSON ? response.responseJSON : "error" );
+            error: function () {
+                alert("error");
             }
         });
     }
@@ -187,8 +191,8 @@ class OrderLabel {
                 t.renderLabelSummary(container.closest('.order-details-container'));
                 t.init();
             },
-            error: function (response) {
-                alert(response.responseJSON ? response.responseJSON : "error" );
+            error: function () {
+                alert("error");
             }
         });
     }
