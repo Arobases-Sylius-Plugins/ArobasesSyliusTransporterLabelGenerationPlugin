@@ -103,7 +103,7 @@ class Transporter implements ResourceInterface
         return $this;
     }
 
-    public function removeShipment(Shipment $shipment): self
+    public function removeShipment (Shipment $shipment): self
     {
         if ($this->shipments->removeElement($shipment)) {
             if ($shipment->getTransporter() === $this) {

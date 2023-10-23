@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait TransporterTrait
 {
-    /** @ORM\ManyToOne(targetEntity="Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Transporter", inversedBy="shipments", cascade={"persist", "remove"}) */
+    /** @ORM\ManyToOne(targetEntity="Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Transporter", inversedBy="shipments") */
     private ?Transporter $transporter = null;
 
     /**
