@@ -76,9 +76,12 @@ final class ColissimoRequest extends AbstractController
         if ($serviceCode === 'A2P' || $serviceCode === 'BPR' || $serviceCode === 'BDP' || $serviceCode === 'CMT' || $serviceCode === 'CORE') {
             $params['letter']['service']['commercialName'] = $order->getShippingAddress()->getCompany();
         }
+        if ($serviceCode === 'A2P' || $serviceCode === 'BPR' || $serviceCode === 'BDP' || $serviceCode === 'CMT' || $serviceCode === 'CORE') {
+            $params['letter']['service']['commercialName'] = $order->getShippingAddress()->getCompany();
+            $params['letter']['addressee']['address']['email'] = $order->getCustomer()->getEmail();
+        }
         if ($serviceCode === 'A2P' || $serviceCode === 'BPR') {
             $params['letter']['addressee']['address']['mobileNumber'] = $order->getShippingAddress()->getPhoneNumber() ? $order->getShippingAddress()->getPhoneNumber() : $order->getBillingAddress()->getPhoneNumber();
-            $params['letter']['addressee']['address']['email'] = $order->getCustomer()->getEmail();
         }
         if ($serviceCode === 'CORE') {
             $params['letter']['addressee'] = [
