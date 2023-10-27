@@ -50,8 +50,8 @@ final class ColissimoRequest extends AbstractController
                 ],
                 'addressee' => [
                     'address' => [
-                        'lastName' => $order->getCustomer()->getLastName(),
-                        'firstName' => $order->getCustomer()->getFirstName(),
+                        'lastName' => $order->getShippingAddress()->getLastName(),
+                        'firstName' => $order->getShippingAddress()->getFirstName(),
                         'line2' => $order->getShippingAddress()->getStreet(),
                         'countryCode' => $order->getShippingAddress()->getCountryCode(),
                         'city' => $order->getShippingAddress()->getCity(),
@@ -66,21 +66,20 @@ final class ColissimoRequest extends AbstractController
             $params['letter']['parcel']['pickupLocationId'] = $order->getShippingAddress()->getPickupPointId();
         }
         if ($serviceCode === 'A2P' || $serviceCode === 'BPR' || $serviceCode === 'PCS' || $serviceCode === 'BDP' || $serviceCode === 'CMT') {
-            if (!$order->getCustomer()->getLastName()) {
-                $params['letter']['addressee']['address']['lastName'] = $order->getShippingAddress()->getLastName();
-            }
-            if (!$order->getCustomer()->getFirstName()) {
-                $params['letter']['addressee']['address']['firstName'] = $order->getShippingAddress()->getFirstName();
-            }
+            $phoneNumber = $order->getShippingAddress()->getPhoneNumber();
+            if (!$phoneNumber)
+                $phoneNumber = $order->getBillingAddress()->getPhoneNumber();
+            if (!$phoneNumber)
+                $phoneNumber = $order->getCustomer()->getPhoneNumber();
+            if (!$phoneNumber)
+                $phoneNumber = $channel->getContactPhoneNumber();
+
+            $params['letter']['addressee']['address']['mobileNumber'] = $phoneNumber;
         }
         if ($serviceCode === 'A2P' || $serviceCode === 'BPR' || $serviceCode === 'BDP' || $serviceCode === 'CMT' || $serviceCode === 'CORE') {
             $params['letter']['service']['commercialName'] = $order->getShippingAddress()->getCompany();
         }
-        if ($serviceCode === 'A2P' || $serviceCode === 'BPR' || $serviceCode === 'BDP' || $serviceCode === 'CMT' || $serviceCode === 'CORE') {
-            $params['letter']['service']['commercialName'] = $order->getShippingAddress()->getCompany();
-            if ($serviceCode === 'A2P' || $serviceCode === 'BPR') {
-                $params['letter']['addressee']['address']['mobileNumber'] = $order->getShippingAddress()->getPhoneNumber() ? $order->getShippingAddress()->getPhoneNumber() : $order->getBillingAddress()->getPhoneNumber();
-            }
+        if ($serviceCode === 'A2P' || $serviceCode === 'BPR') {
             $params['letter']['addressee']['address']['email'] = $order->getCustomer()->getEmail();
         }
         if ($serviceCode === 'CORE') {
