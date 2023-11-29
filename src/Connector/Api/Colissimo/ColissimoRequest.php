@@ -12,7 +12,7 @@ use Sylius\Component\Core\Model\Channel;
 use Sylius\Component\Core\Model\Order;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-final class ColissimoRequest extends AbstractController
+final class ColissimoRequest extends AbstractController implements ColissimoRequestInterface
 {
     public function generateLabel(Channel $channel, Label $label, Transporter $transporter, string $outputPrintingType, string $depositDate): array
     {
