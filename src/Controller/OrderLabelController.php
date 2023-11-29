@@ -25,6 +25,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Arobases\SyliusTransporterLabelGenerationPlugin\Connector\Api\Colissimo\ColissimoRequestInterface;
 
 final class OrderLabelController extends AbstractController
 {
@@ -35,7 +36,7 @@ final class OrderLabelController extends AbstractController
         private LabelRepository $labelRepository,
         private LabelItemRepository $labelItemRepository,
         private TransporterRepository $transporterRepository,
-        private ColissimoRequest $colissimoRequest,
+        private ColissimoRequestInterface $colissimoRequest,
         private ChannelContextInterface $channelContext,
         private ShipmentRepositoryInterface $shipmentRepository,
         private string $basePath,
