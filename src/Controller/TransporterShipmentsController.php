@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Arobases\SyliusTransporterLabelGenerationPlugin\Controller;
 
-use Arobases\SyliusTransporterLabelGenerationPlugin\Connector\Api\Colissimo\ColissimoRequest;
+use Arobases\SyliusTransporterLabelGenerationPlugin\Connector\Api\Colissimo\ColissimoRequestInterface;
 use Arobases\SyliusTransporterLabelGenerationPlugin\Form\Type\TransporterProductCodeType;
 use Arobases\SyliusTransporterLabelGenerationPlugin\Repository\TransporterRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Bundle\AddressingBundle\Form\Type\AddressType;
-use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderRepository;
 use Sylius\Component\Core\Model\Order;
 use Sylius\Component\Core\Model\Shipment;
+use Sylius\Component\Core\Repository\OrderRepositoryInterface;
 use Sylius\Component\Core\Repository\ShipmentRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -27,8 +27,8 @@ final class TransporterShipmentsController extends AbstractController
         private TransporterRepository $transporterRepository,
         private ShipmentRepositoryInterface $shipmentRepository,
         private EntityManagerInterface $entityManager,
-        private ColissimoRequest $colissimoRequest,
-        private OrderRepository $orderRepository,
+        private ColissimoRequestInterface $colissimoRequest,
+        private OrderRepositoryInterface $orderRepository,
         private FormFactoryInterface $formFactory
     ) {}
 
