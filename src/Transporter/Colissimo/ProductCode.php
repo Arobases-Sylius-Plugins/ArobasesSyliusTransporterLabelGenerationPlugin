@@ -24,6 +24,8 @@ class ProductCode
     public const BDP = 'BDP';
     public const COM = 'COM';
     public const CDS = 'CDS';
+    public const BOM = 'BOM';
+    public const BOS = 'BOS';
     public const VALUES = [
         'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.DOM' => 'DOM',
         'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.COLD' => 'COLD',
@@ -40,5 +42,7 @@ class ProductCode
         'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.BDP' => 'BDP',
         'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.COM' => 'COM',
         'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.CDS' => 'CDS',
+        'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.BOM' => 'BOM',
+        'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.BOS' => 'BOS'
     ];
 }
