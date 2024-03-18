@@ -16,16 +16,19 @@ class ProductCode
     public const CORE = 'CORE';
     public const COLR = 'COLR';
 
+    // Europe
+    public const CMT = 'CMT';
+    public const BDP = 'BDP';
+    public const BOM = 'BOM';
+    public const BOS = 'BOS';
+
     // International
     public const CORI = 'CORI';
     public const ECO = 'ECO';
-    public const CMT = 'CMT';
     public const PCS = 'PCS';
-    public const BDP = 'BDP';
     public const COM = 'COM';
     public const CDS = 'CDS';
-    public const BOM = 'BOM';
-    public const BOS = 'BOS';
+    public const COLI = 'COLI';
     public const VALUES = [
         'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.DOM' => 'DOM',
         'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.COLD' => 'COLD',
@@ -43,6 +46,7 @@ class ProductCode
         'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.COM' => 'COM',
         'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.CDS' => 'CDS',
         'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.BOM' => 'BOM',
-        'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.BOS' => 'BOS'
+        'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.BOS' => 'BOS',
+        'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.COLI' => 'COLI'
     ];
 }
