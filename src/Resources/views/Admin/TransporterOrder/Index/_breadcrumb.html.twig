@@ -1,7 +1,12 @@
 {% import '@SyliusAdmin/Macro/breadcrumb.html.twig' as breadcrumb %}
 
+{% set name = "colissimo" %}
+{% if transporter is defined %}
+    {% set name = transporter.name %}
+{% endif %}
+
 {{ breadcrumb.crumble([
     { label: 'sylius.ui.administration'|trans, url: path('sylius_admin_dashboard') },
     { label: 'arobases_sylius_transporter_label_generation_plugin.ui.transporters'|trans, url: path('arobases_sylius_transporter_label_generation_plugin_admin_transporter_index') },
-    { label: 'arobases_sylius_transporter_label_generation_plugin.ui.colissimo'|trans },
+    { label: name },
 ]) }}

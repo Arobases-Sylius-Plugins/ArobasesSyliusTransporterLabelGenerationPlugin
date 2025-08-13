@@ -3,6 +3,9 @@ services:
   arobases.transporter_label_generation.connector.api.colissimo:
     class: Arobases\SyliusTransporterLabelGenerationPlugin\Connector\Api\Colissimo\ColissimoRequest
 
+  arobases.transporter_label_generation.connector.api.chronopost:
+    class: Arobases\SyliusTransporterLabelGenerationPlugin\Connector\Api\Chronopost\ChronopostRequest
+
   ###############################  BEGIN EVENT LISTENER ###############################
 
   arobases.transporter_label_generation.listener.admin_menu:

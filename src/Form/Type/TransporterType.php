@@ -14,25 +14,12 @@ final class TransporterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $outPrintingType = [
-            OutPrintingType::ZPL_10_X_15_203_DPI => OutPrintingType::ZPL_10_X_15_203_DPI,
-            OutPrintingType::ZPL_10_X_15_300_DPI => OutPrintingType::ZPL_10_X_15_300_DPI,
-            OutPrintingType::DPL_10_X_10_203_DPI => OutPrintingType::DPL_10_X_10_203_DPI,
-            OutPrintingType::DPL_10_X_10_300_DPI => OutPrintingType::DPL_10_X_10_300_DPI,
-            OutPrintingType::DPL_10_X_15_203_DPI => OutPrintingType::DPL_10_X_15_203_DPI,
-            OutPrintingType::DPL_10_X_15_300_DPI => OutPrintingType::DPL_10_X_15_300_DPI,
-            OutPrintingType::ZPL_10_X_10_203_DPI => OutPrintingType::ZPL_10_X_10_203_DPI,
-            OutPrintingType::ZPL_10_X_10_300_DPI => OutPrintingType::ZPL_10_X_10_300_DPI,
-            OutPrintingType::PDF_10_X_10_300_DPI => OutPrintingType::PDF_10_X_10_300_DPI,
-            OutPrintingType::PDF_10_X_15_300_DPI => OutPrintingType::PDF_10_X_15_300_DPI,
-            OutPrintingType::PDF_A_4_300_DPI => OutPrintingType::PDF_A_4_300_DPI,
-        ];
-
         $builder
             ->add('name', ChoiceType::class, [
                 'label' => 'sylius.ui.name',
                 'choices' => [
                     'Colissimo' => 'colissimo',
+                    'Chronopost' => 'chronopost',
                 ],
             ])
             ->add('accountNumber', TextType::class, [
@@ -45,7 +32,7 @@ final class TransporterType extends AbstractType
             ])
             ->add('defaultOutputPrintingType', ChoiceType::class, [
                 'label' => 'arobases_sylius_transporter_label_generation_plugin.transporter.default_output_printing_type',
-                'choices' => $outPrintingType,
+                'choices' => array_merge(OutPrintingType::OUTPRINTING_TYPE_COLISSIMO, OutPrintingType::OUTPRINTING_TYPE_CHRONOPOST),
             ])
         ;
     }

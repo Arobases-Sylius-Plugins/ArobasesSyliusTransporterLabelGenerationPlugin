@@ -204,8 +204,11 @@ final class OrderLabelController extends AbstractController
 
             return new JsonResponse($error_message[0], Response::HTTP_BAD_REQUEST);
         }
+        elseif ($transporter->getName() === 'chronopost') {
 
-        return new JsonResponse('not colissimo', Response::HTTP_BAD_REQUEST);
+        }
+
+        return new JsonResponse('transporter not found', Response::HTTP_BAD_REQUEST);
     }
 
     public function renderLabelSummaryAjax(Request $request): JsonResponse
