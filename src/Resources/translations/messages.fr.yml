@@ -74,6 +74,12 @@ arobases_sylius_transporter_label_generation_plugin:
             BOM: Colissimo Domicile Europe - sans signature (BOM)
             BOS: Colissimo Domicile Europe - avec signature (BOS)
             COLI: Colissimo International - Colissimo Expert International (COLI)
+    chronopost:
+        product_code:
+            CE: Chronopost Domicile Express
+            CEX: Chronopost Relais France
+            CRE: Chronopost Relais Europe
+
     flashbag:
         error: Une erreur est survenue
         update_shipping_method_transporter_code_sucess: Le service de livraison a été modifié

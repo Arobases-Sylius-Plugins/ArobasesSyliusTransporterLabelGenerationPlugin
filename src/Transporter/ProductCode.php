@@ -32,13 +32,9 @@ class ProductCode
     public const CDS = 'CDS';
     public const COLI = 'COLI';
 
-    // --------------------------
-    // Chronopost Express - France
-    // --------------------------
-    public const CE = 'CE';     // Chronopost Express Domicile
-    public const CEX = 'CEX';   // Chronopost Express Relais
-    public const CDS_CHRONO = 'CDS'; // Chrono 13 Domicile
-    public const CDR = 'CDR';   // Chrono 13 Relais
+    public const CE = 'CE';       // Chronopost Domicile Express
+    public const CEX = 'CEX';     // Chronopost Relais France
+    public const CRE = 'CRE';     // Chronopost Relais Europe
 
     // --------------------------
     // Mapping pour i18n / valeurs affichables
@@ -64,10 +60,9 @@ class ProductCode
         'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.BOS' => self::BOS,
         'arobases_sylius_transporter_label_generation_plugin.colissimo.product_code.COLI' => self::COLI,
 
-        // Chronopost Express
+        // Chronopost
         'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CE' => self::CE,
         'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CEX' => self::CEX,
-        'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CDS' => self::CDS_CHRONO,
-        'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CDR' => self::CDR,
+        'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CDS' => self::CRE,
     ];
 }
