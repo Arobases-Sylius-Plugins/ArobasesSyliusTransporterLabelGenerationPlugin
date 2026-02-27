@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Arobases\SyliusTransporterLabelGenerationPlugin\Form\Type;
 
-use Arobases\SyliusTransporterLabelGenerationPlugin\Transporter\Colissimo\OutPrintingType;
+use Arobases\SyliusTransporterLabelGenerationPlugin\Transporter\OutPrintingType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

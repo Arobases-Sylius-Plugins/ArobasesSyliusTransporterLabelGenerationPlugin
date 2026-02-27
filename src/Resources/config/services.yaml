@@ -32,6 +32,7 @@ services:
       - '@Sylius\Bundle\CoreBundle\Doctrine\ORM\ShipmentRepository'
       - '%kernel.project_dir%/public/'
       - 'upload/label/colissimo/'
+      - 'upload/label/chronopost/'
 
   Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShipmentsController:
     tags:

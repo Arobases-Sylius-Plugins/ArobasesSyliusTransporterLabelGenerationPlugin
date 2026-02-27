@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Arobases\SyliusTransporterLabelGenerationPlugin\Controller;
 
+use Arobases\SyliusTransporterLabelGenerationPlugin\Connector\Api\Chronopost\ChronopostRequestInterface;
 use Arobases\SyliusTransporterLabelGenerationPlugin\Connector\Api\Colissimo\ColissimoRequest;
 use Arobases\SyliusTransporterLabelGenerationPlugin\Connector\Api\Colissimo\MTOM_ResponseReader;
 use Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Label;
@@ -37,10 +38,12 @@ final class OrderLabelController extends AbstractController
         private LabelItemRepository $labelItemRepository,
         private TransporterRepository $transporterRepository,
         private ColissimoRequestInterface $colissimoRequest,
+        private ChronopostRequestInterface $chronopostRequest,
         private ChannelContextInterface $channelContext,
         private ShipmentRepositoryInterface $shipmentRepository,
         private string $basePath,
-        private string $labelColissimoUploadPath
+        private string $labelColissimoUploadPath,
+        private string $labelChronopostUploadPath
     ) {
     }
 
@@ -205,6 +208,57 @@ final class OrderLabelController extends AbstractController
             return new JsonResponse($error_message[0], Response::HTTP_BAD_REQUEST);
         }
         elseif ($transporter->getName() === 'chronopost') {
+            $now = new \DateTime();
+            $depositDate = $now->format('Y-m-d'); // date d'expédition
+            $outputPrintingType = $transporter->getDefaultOutputPrintingType();
+
+// Génération de l'étiquette Chronopost
+            $response = $this->chronopostRequest->generateLabel($this->channelContext->getChannel() ,$label, $transporter, $outputPrintingType, $depositDate);
+
+            if (!isset($response['response']) || !$response['response']) {
+                return new JsonResponse('no response', Response::HTTP_BAD_REQUEST);
+            }
+
+            $save_valid = true;
+            $soapResult = $response['response']; // XML SOAP retourné
+
+// Parsing de la réponse SOAP
+            $xml = simplexml_load_string($soapResult);
+            $namespaces = $xml->getNamespaces(true);
+            $body = $xml->children($namespaces['soap'])->Body;
+            $resp = $body->children($namespaces['ns1'])->shippingMultiParcelV4Response->return;
+
+// Vérification du code d'erreur
+            $errorCode = (string) $resp->errorCode;
+            $errorMessage = (string) $resp->errorMessage;
+
+            if ($errorCode !== '0') {
+                return new JsonResponse($errorMessage ?: 'Unknown error', Response::HTTP_BAD_REQUEST);
+            }
+
+// Récupération des infos du colis
+            $result = $resp->resultMultiParcelValue;
+            $parcelNumber = (string) $result->geoPostNumeroColis ?: uniqid('chrono_'); // fallback
+            $skybillNumber = (string) $result->skybillNumber;
+            $pdfBase64 = (string) $result->pdfEtiquette;
+
+// Sauvegarde du PDF
+            $fileName = $this->labelChronopostUploadPath . $parcelNumber . '.pdf';
+            if (file_put_contents($this->basePath . $fileName, base64_decode($pdfBase64))) {
+                $label->setPath($fileName);
+                $label->setTrackingNumber($parcelNumber);
+
+                $this->entityManager->persist($label);
+                $this->entityManager->flush();
+            } else {
+                $save_valid = false;
+            }
+
+            if ($save_valid) {
+                return new JsonResponse(null, Response::HTTP_OK);
+            }
+
+            return new JsonResponse("label not generated", Response::HTTP_INTERNAL_SERVER_ERROR);
 
         }
 

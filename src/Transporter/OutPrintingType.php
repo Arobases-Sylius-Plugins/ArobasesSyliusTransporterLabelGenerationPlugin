@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Arobases\SyliusTransporterLabelGenerationPlugin\Transporter\Colissimo;
+namespace Arobases\SyliusTransporterLabelGenerationPlugin\Transporter;
 
 class OutPrintingType
 {
