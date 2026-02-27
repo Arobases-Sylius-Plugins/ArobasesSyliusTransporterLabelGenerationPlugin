@@ -32,9 +32,9 @@ class ProductCode
     public const CDS = 'CDS';
     public const COLI = 'COLI';
 
-    public const CE = 'CE';       // Chronopost Domicile Express
-    public const CEX = 'CEX';     // Chronopost Relais France
-    public const CRE = 'CRE';     // Chronopost Relais Europe
+    public const CE = '01';       // Chronopost Domicile Express
+    public const CEX = '5X';     // Chronopost Relais France
+    public const CRE = '6B';     // Chronopost Relais Europe
 
     // --------------------------
     // Mapping pour i18n / valeurs affichables
