@@ -63,6 +63,6 @@ class ProductCode
         // Chronopost
         'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CE' => self::CE,
         'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CEX' => self::CEX,
-        'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CDS' => self::CRE,
+        'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CRE' => self::CRE,
     ];
 }
