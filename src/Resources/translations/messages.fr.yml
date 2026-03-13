@@ -77,9 +77,10 @@ arobases_sylius_transporter_label_generation_plugin:
     chronopost:
         product_code:
             CE: Chronopost Domicile Express
-            CEX: Chronopost Relais France
+            CRF: Chronopost Relais France
             CRE: Chronopost Relais Europe
-
+            CEC: Chronopost europe classique
+            CDEEM: Chronopost domicile express europe/monde
     flashbag:
         error: Une erreur est survenue
         update_shipping_method_transporter_code_sucess: Le service de livraison a été modifié

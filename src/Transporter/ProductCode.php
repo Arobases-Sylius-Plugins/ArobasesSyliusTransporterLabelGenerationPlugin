@@ -33,8 +33,10 @@ class ProductCode
     public const COLI = 'COLI';
 
     public const CE = '01';       // Chronopost Domicile Express
-    public const CEX = '5X';     // Chronopost Relais France
-    public const CRE = '6B';     // Chronopost Relais Europe
+    public const CRF = '86';     // Chronopost Relais France
+    public const CRE = '49';     // Chronopost Relais Europe
+    public const CEC = '44';     // Chronopost europe classique
+    public const CDEEM = '17';     // Chronopost domicile express europe monde
 
     // --------------------------
     // Mapping pour i18n / valeurs affichables
@@ -62,7 +64,9 @@ class ProductCode
 
         // Chronopost
         'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CE' => self::CE,
-        'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CEX' => self::CEX,
+        'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CRF' => self::CRF,
         'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CRE' => self::CRE,
+        'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CEC' => self::CEC,
+        'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CDEEM' => self::CDEEM,
     ];
 }

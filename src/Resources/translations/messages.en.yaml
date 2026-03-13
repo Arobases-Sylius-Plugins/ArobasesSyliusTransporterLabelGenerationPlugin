@@ -1,1 +1,87 @@
 arobases_sylius_transporter_label_generation_plugin:
+  menu:
+    admin:
+      label_generation: Label generation
+  ui:
+    colissimo: Colissimo
+    shipping_state: Shipping status
+    generate: Generate label
+    sent_products: Sent products
+    generated_labels: Generated labels
+    summary: Summary
+    transporters: Carriers
+    new_transporter: Add a carrier
+    edit_transporter: Edit a carrier
+    choose_an_option: Choose an option
+    update: Update
+    submit_pickup_point: Confirm this pickup point
+    ready: Ready
+    error_message_hs_code: Warning not all HS codes for the products in this order have been filled in. A default code will be used on the label if the HS codes are missing.
+  order:
+    details: Order details
+    total_ttc: Total incl. tax
+    total_shipping_costs: Total shipping costs incl. tax
+    total_weight: Total weight
+    total_sending_weight: Total shipment weight
+    order_sent: Order sent
+    order_partially_sent: Order partially sent
+    order_not_sent: Order not sent
+  order_item:
+    code: Code
+    name: Product name
+    quantity: Quantity
+    unit_price_HT: Unit price (excl. tax)
+    unit_weight: Unit weight (kg)
+  label_item:
+    product_name: Product name
+    quantity: Shipped quantity
+    tracking_number: Tracking number
+  label:
+    simple_label: Outbound label
+    cn23: CN23
+    tracking_number: Tracking number
+  transporter:
+    go: Go to this carrier
+    account_number: Account number
+    password: Password
+    default_output_printing_type: Default label format
+  form:
+    shipment:
+      transporter: Carrier
+      transporter_code: Carrier service code
+    update_order_address: Update order address
+    product:
+      hs_code: HS code
+  colissimo:
+    product_code:
+      DOM: Colissimo Home Delivery - without signature (DOM)
+      DOS: Colissimo Home Delivery - with signature (DOS)
+      COLD: Colissimo Home Delivery - without signature before 2016 (COLD)
+      COL: Colissimo Home Delivery - with signature before 2016 (COL)
+      BPR: Colissimo Pickup Point – Post Office (BPR)
+      A2P: Colissimo Pickup Point – Pickup relay (A2P)
+      CORE: Colissimo Return France (CORE)
+      COLR: Colissimo Flash - without signature (COLR)
+      JP1: Colissimo Flash – with signature (JP1)
+      CORI: Colissimo Return Overseas (CORI)
+      COM: Colissimo Overseas Home Delivery - without signature (COM)
+      CDS: Colissimo Overseas Home Delivery - with signature (CDS)
+      ECO: Colissimo Eco Overseas - without signature (ECO)
+      ECOS: Colissimo Eco Overseas - with signature (ECOS)
+      CMT: Colissimo International Pickup Point – Relay (CMT)
+      PCS: Colissimo International Pickup Point – Pickup Station locker (PCS)
+      BDP: Colissimo International Pickup Point – Post Office (BDP)
+      BOM: Colissimo Home Delivery Europe - without signature (BOM)
+      BOS: Colissimo Home Delivery Europe - with signature (BOS)
+      COLI: Colissimo International - Colissimo Expert International (COLI)
+  chronopost:
+    product_code:
+      CE: Chronopost Home Express
+      CRF: Chronopost Relay France
+      CRE: Chronopost Relay Europe
+      CEC: Chronopost Europe Classic
+      CDEEM: Chronopost Home Express Europe/World
+  flashbag:
+    error: An error occurred
+    update_shipping_method_transporter_code_sucess: The shipping service has been updated
+    update_shipping_method_transporter_code_pickup_point_error: Pickup point selection failed
