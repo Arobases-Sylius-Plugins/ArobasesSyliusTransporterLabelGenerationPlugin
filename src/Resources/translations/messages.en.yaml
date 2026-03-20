@@ -81,6 +81,8 @@ arobases_sylius_transporter_label_generation_plugin:
       CRE: Chronopost Relay Europe
       CEC: Chronopost Europe Classic
       CDEEM: Chronopost Home Express Europe/World
+      CRFLC: Chronopost Relay France - LOW COST
+      CRELC: Chronopost Relay Europe - LOW COST
   flashbag:
     error: An error occurred
     update_shipping_method_transporter_code_sucess: The shipping service has been updated

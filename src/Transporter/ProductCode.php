@@ -38,6 +38,11 @@ class ProductCode
     public const CEC = '44';     // Chronopost europe classique
     public const CDEEM = '17';     // Chronopost domicile express europe monde
 
+    public const CRFLC = '5X';     // Chronopost Relais France LOW COST
+
+    public const CRELC = '6B'   // Chronopost Relais Europe LOW COST
+     ;
+
     // --------------------------
     // Mapping pour i18n / valeurs affichables
     // --------------------------
@@ -68,5 +73,7 @@ class ProductCode
         'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CRE' => self::CRE,
         'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CEC' => self::CEC,
         'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CDEEM' => self::CDEEM,
+        'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CRFLC' => self::CRFLC,
+        'arobases_sylius_transporter_label_generation_plugin.chronopost.product_code.CRELC' => self::CRELC,
     ];
 }
