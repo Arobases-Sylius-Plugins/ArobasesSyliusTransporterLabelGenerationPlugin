@@ -6,16 +6,21 @@
 
 <h2 align="center">Installation</h2>
 
+| Plugin version | Sylius | PHP |
+| --- | --- | --- |
+| 1.x | 2.3 | 8.3+ |
+| 0.1.x | 1.14 | 8.1+ |
+| 0.0.x | 1.10 | 7.4+ |
+
 ### Step 1: Download the plugin
 
 ```bash
-composer require arobases/sylius-transporter-label-generation-plugin
+composer require arobases/sylius-transporter-label-generation-plugin:^1.0
 ```
 
 ### Step 2: Enable the plugin
 
-```bash
-<?php
+```php
 # config/bundles.php
 
 return [
@@ -25,8 +30,8 @@ return [
 
 ### Step 3: Import Routes
 
-```bash
-# config/routes.yaml
+```yaml
+# config/routes/arobases_sylius_transporter_label_generation.yaml
 arobases_sylius_transporter_label_generation_admin:
     resource: "@ArobasesSyliusTransporterLabelGenerationPlugin/Resources/config/admin_routing.yml"
     prefix: /%sylius_admin.path_name%
@@ -34,7 +39,7 @@ arobases_sylius_transporter_label_generation_admin:
 
 ### Step 4: Import config
 
-```bash
+```yaml
 # config/packages/arobases_sylius_transporter_label_generation.yaml
 imports:
   - { resource: "@ArobasesSyliusTransporterLabelGenerationPlugin/Resources/config/resources.yaml" }
@@ -42,96 +47,124 @@ imports:
 
 ### Step 5: Include Traits
 
-override Shipment entity to include TransporterTrait
-```bash
-# Entity/Shipping/Shipment.php
+The traits are mapped with attributes and annotations, so they work whatever the mapping type of your `App` entities.
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="sylius_shipment")
- */
-class Shipment extends BaseShipment {
+override Shipment entity to include TransporterTrait
+```php
+# src/Entity/Shipping/Shipment.php
+
+#[ORM\Entity]
+#[ORM\Table(name: 'sylius_shipment')]
+class Shipment extends BaseShipment
+{
     use TransporterTrait;
 }
 ```
 
 override Address entity to include PickupPointTrait
-```bash
-# Entity/Addressing/Address.php
+```php
+# src/Entity/Addressing/Address.php
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="sylius_address")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'sylius_address')]
 class Address extends BaseAddress
 {
     use PickupPointTrait;
 }
 ```
 
-override Product entity to include HsCodeTrait and add the field to your form
-```bash
-# Entity/Product/Product.php
+override Product entity to include HsCodeTrait
+```php
+# src/Entity/Product/Product.php
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="sylius_product")
- */
-class Product extends BaseProduct {
+#[ORM\Entity]
+#[ORM\Table(name: 'sylius_product')]
+class Product extends BaseProduct implements ProductInterface
+{
     use HsCodeTrait;
 }
 ```
-```bash
-# Form/Extension/Product/ProductTypeExtension.php
 
-->add('hsCode', TextType::class,[
-        'label' => "arobases_sylius_transporter_label_generation_plugin.form.product.hs_code",
-        'required' => false
-    ])
-```
-```bash
-# Product/Tab/_details.html.twig
+and add the field to the product form: the plugin displays it in the "General" section of the product form as soon as the field exists
+```php
+# src/Form/Extension/ProductTypeExtension.php
 
-{{ form_row(form.hsCode) }}
+final class ProductTypeExtension extends AbstractTypeExtension
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder->add('hsCode', TextType::class, [
+            'label' => 'arobases_sylius_transporter_label_generation_plugin.form.product.hs_code',
+            'required' => false,
+        ]);
+    }
+
+    public static function getExtendedTypes(): iterable
+    {
+        return [ProductType::class];
+    }
+}
 ```
 
 override OrderRepository or add it 'findByShipment'
-```bash
-# OrderRepository.php
+```php
+# src/Repository/OrderRepository.php
 
-public function findByShipment($transporterId): QueryBuilder
+use Sylius\Bundle\CoreBundle\Doctrine\ORM\OrderRepository as BaseOrderRepository;
+
+class OrderRepository extends BaseOrderRepository
 {
-  $qb = $this->createQueryBuilder('o')
-    ->leftJoin('o.shipments', 'shipment')
-    ->leftJoin('shipment.transporter', 'transporter')
-    ->andWhere('transporter.id = :transporterId')
-    ->andWhere('o.shippingState IN (:shippingState)')
-    ->andWhere('o.paymentState IN (:paymentState)')
-    ->setParameter('transporterId', $transporterId)
-    ->setParameter('shippingState', ["ready", "shipped", "in_preparation"])
-    ->setParameter('paymentState', ["paid"])
+    public function findByShipment($transporterId): QueryBuilder
+    {
+        return $this->createQueryBuilder('o')
+            ->leftJoin('o.shipments', 'shipment')
+            ->leftJoin('shipment.transporter', 'transporter')
+            ->andWhere('transporter.id = :transporterId')
+            ->andWhere('o.shippingState IN (:shippingState)')
+            ->andWhere('o.paymentState IN (:paymentState)')
+            ->setParameter('transporterId', $transporterId)
+            ->setParameter('shippingState', ['ready', 'shipped', 'in_preparation'])
+            ->setParameter('paymentState', ['paid'])
         ;
-    return $qb;
+    }
 }
+```
+```yaml
+# config/packages/_sylius.yaml
+sylius_order:
+    resources:
+        order:
+            classes:
+                model: App\Entity\Order\Order
+                repository: App\Repository\OrderRepository
 ```
 
 ### Step 6: Update database
 
 ```bash
-bin/console doctrine:migration:migrate
+bin/console doctrine:migrations:diff
+bin/console doctrine:migrations:migrate
 ```
 
-Don't forget to run those commands to generate your files
+Don't forget to install the assets
 ```bash
-bin/console asset:install
-bin/console sylius:theme:asset:install
+bin/console assets:install
 ```
 
 <h2 align="center">How it works</h2>
 
+The plugin adds a "Label generation" entry in the "Sales" section of the admin menu.
+
 !!! think to allow file writting for label generation (var/upload/label/colissimo) !!!
 
 Labels contain customer personal data, so they are stored outside of the public directory and downloaded from the admin only.
+
+### Upgrade from 0.1.x (Sylius 1.14)
+
+- the admin is rendered with Twig Hooks: templates overridden from `@ArobasesSyliusTransporterLabelGenerationPlugin/Admin` must be rewritten (Semantic UI and jQuery are no longer used)
+- the transporter CRUD routes are generated by Sylius: `/transporters/new` and `/transporters/{id}/edit` instead of `/transporter/create` and `/transporter/{id}/update` (route names are unchanged)
+- `Label::getRelatedOrder()` and `LabelItem::getOrderItem()` return `OrderInterface` and `OrderItemInterface`
+- the HS code field of the product form is displayed by the plugin, remove it from your product templates
 
 ### Upgrade from 0.0.x
 
