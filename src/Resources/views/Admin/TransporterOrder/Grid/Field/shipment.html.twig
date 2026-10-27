@@ -6,9 +6,11 @@
                 <div class="error-msg">{{ "arobases_sylius_transporter_label_generation_plugin.ui.error_message_hs_code"|trans }}</div>
             {% endif %}
         {% endif %}
-        <div data-transporter-code="{{ shipment.transporterCode }}">
-            {% set shipmentId = shipment.id %}
-            {{ render(url('arobases_sylius_transporter_label_generation_plugin_admin_render_update_transporter_shipment_form', {transporterId: shipment.transporter.id, shipmentId: shipmentId, orderId: shipment.order.id})) }}
-        </div>
+        {% if shipment.transporterCode %}
+            <div data-transporter-code="{{ shipment.transporterCode }}">
+                {% set shipmentId = shipment.id %}
+                {{ render(url('arobases_sylius_transporter_label_generation_plugin_admin_render_update_transporter_shipment_form', {transporterId: shipment.transporter.id, shipmentId: shipmentId, orderId: shipment.order.id})) }}
+            </div>
+        {% endif %}
     {% endfor %}
 {% endif %}
