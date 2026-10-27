@@ -8,7 +8,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait TransporterTrait
 {
-    /** @ORM\ManyToOne(targetEntity="Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Transporter", inversedBy="shipments") */
+    /**
+     * Annotations are kept for applications still mapping their entities with annotations.
+     *
+     * @ORM\ManyToOne(targetEntity="Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Transporter", inversedBy="shipments")
+     */
+    #[ORM\ManyToOne(targetEntity: Transporter::class, inversedBy: 'shipments')]
     private ?Transporter $transporter = null;
 
     /**
@@ -16,6 +21,7 @@ trait TransporterTrait
      *
      * @ORM\Column(name="transporter_code", type="string", nullable=true)
      */
+    #[ORM\Column(name: 'transporter_code', type: 'string', nullable: true)]
     private ?string $transporterCode = null;
 
     public function getTransporter(): ?Transporter

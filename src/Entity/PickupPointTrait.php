@@ -8,7 +8,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait PickupPointTrait
 {
-    /** @ORM\Column(name="pickup_point_id", type="string", nullable=true) */
+    /**
+     * Annotations are kept for applications still mapping their entities with annotations.
+     *
+     * @ORM\Column(name="pickup_point_id", type="string", nullable=true)
+     */
+    #[ORM\Column(name: 'pickup_point_id', type: 'string', nullable: true)]
     private ?string $pickupPointId = null;
 
     public function getPickupPointId(): ?string

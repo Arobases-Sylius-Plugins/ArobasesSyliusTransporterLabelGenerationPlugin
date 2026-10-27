@@ -9,8 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 trait HsCodeTrait
 {
     /**
+     * Annotations are kept for applications still mapping their entities with annotations.
+     *
      * @ORM\Column(name="hs_code", type="string", nullable=true)
      */
+    #[ORM\Column(name: 'hs_code', type: 'string', nullable: true)]
     private ?string $hsCode = null;
 
     /**

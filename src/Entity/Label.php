@@ -8,51 +8,42 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Sylius\Component\Core\Model\Order;
+use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Resource\Model\ResourceInterface;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="arobases_sylius_transport_label_generation_plugin_label")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'arobases_sylius_transport_label_generation_plugin_label')]
 class Label implements ResourceInterface
 {
     use TimestampableEntity;
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /** @ORM\Column(name="return_ticket", type="boolean", options={"default" : 0}) */
+    #[ORM\Column(name: 'return_ticket', type: 'boolean', options: ['default' => 0])]
     private bool $return = false;
 
-    /** @ORM\Column(type="string", nullable=true) */
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $path = null;
 
-    /** @ORM\Column(name="path_cn23", type="string", nullable=true) */
+    #[ORM\Column(name: 'path_cn23', type: 'string', nullable: true)]
     private ?string $pathCn23 = null;
 
-    /**
-     * unit: kg
-     *
-     * @ORM\Column(name="total_weight", type="float")
-     */
+    /** unit: kg */
+    #[ORM\Column(name: 'total_weight', type: 'float')]
     private float $totalWeight;
 
-    /** @ORM\Column(name="tracking_number", type="string", nullable=true) */
+    #[ORM\Column(name: 'tracking_number', type: 'string', nullable: true)]
     private ?string $trackingNumber = null;
 
-    /** @ORM\OneToMany(targetEntity=LabelItem::class, mappedBy="label", cascade={"persist", "remove"}) */
+    #[ORM\OneToMany(targetEntity: LabelItem::class, mappedBy: 'label', cascade: ['persist', 'remove'])]
     private Collection $labelItems;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Sylius\Component\Core\Model\Order")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL", name="`related_order`")
-     */
-    private ?Order $relatedOrder;
+    #[ORM\ManyToOne(targetEntity: OrderInterface::class)]
+    #[ORM\JoinColumn(name: '`related_order`', nullable: true, onDelete: 'SET NULL')]
+    private ?OrderInterface $relatedOrder = null;
 
     public function __construct()
     {
@@ -133,12 +124,12 @@ class Label implements ResourceInterface
         return $this;
     }
 
-    public function getRelatedOrder(): ?Order
+    public function getRelatedOrder(): ?OrderInterface
     {
         return $this->relatedOrder;
     }
 
-    public function setRelatedOrder(?Order $order): void
+    public function setRelatedOrder(?OrderInterface $order): void
     {
         $this->relatedOrder = $order;
     }
