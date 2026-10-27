@@ -22,9 +22,11 @@ use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Model\Order;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Arobases\SyliusTransporterLabelGenerationPlugin\Connector\Api\Colissimo\ColissimoRequestInterface;
 
 final class OrderLabelController extends AbstractController
@@ -46,6 +48,8 @@ final class OrderLabelController extends AbstractController
 
     public function renderOrderDetails(Request $request): JsonResponse
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS');
+
         $orderNumber = $request->query->get('number');
         if (!$orderNumber) {
             return new JsonResponse('order number missing', Response::HTTP_BAD_REQUEST);
@@ -81,6 +85,11 @@ final class OrderLabelController extends AbstractController
 
     public function generateLabelAjax(Request $request): JsonResponse
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS');
+        if (!$this->isCsrfTokenValid('arobases_generate_label', (string) $request->request->get('_token'))) {
+            return new JsonResponse('invalid csrf token', Response::HTTP_FORBIDDEN);
+        }
+
         $totalWeight = $request->request->get('total_weight');
         $transporterId = $request->request->get('transporter');
         $orderId = $request->request->get('order_id');
@@ -114,7 +123,11 @@ final class OrderLabelController extends AbstractController
         }
         // create label items
         foreach ($itemIds as $id) {
-            $orderItem = $this->orderItemRepository->find($id);
+            // only items of the current order can be added to the label
+            $orderItem = $this->orderItemRepository->findOneBy(['id' => (int) $id, 'order' => $order]);
+            if (!$orderItem) {
+                continue;
+            }
 
             $labelItem = new LabelItem();
             $labelItem->setOrderItem($orderItem);
@@ -164,6 +177,13 @@ final class OrderLabelController extends AbstractController
                 $pieces = explode('<parcelNumber>', $soap_result);
                 $pieces = explode('</parcelNumber>', $pieces[1]);
                 $parcelNumber = $pieces[0]; //Extract the parcel number
+                // the parcel number is used as file name
+                if (!preg_match('/^[A-Za-z0-9]+$/', $parcelNumber) || !in_array($extension, ['pdf', 'zpl', 'dpl'], true)) {
+                    return new JsonResponse("label not generated", Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+                if (!is_dir($this->basePath . $this->labelColissimoUploadPath)) {
+                    mkdir($this->basePath . $this->labelColissimoUploadPath, 0775, true);
+                }
                 $fileName = $this->labelColissimoUploadPath . $parcelNumber . '.' . $extension;
                 $file = fopen($this->basePath . $fileName, 'a+');
                 if (fwrite($file, $datas)) { //Save the label in defined folder
@@ -210,6 +230,8 @@ final class OrderLabelController extends AbstractController
 
     public function renderLabelSummaryAjax(Request $request): JsonResponse
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS');
+
         $orderId = $request->query->get('orderId');
         if (!$orderId) {
             return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
@@ -244,17 +266,47 @@ final class OrderLabelController extends AbstractController
         return new JsonResponse(['html' => $html]);
     }
 
+    public function downloadLabel(int $labelId, string $document): BinaryFileResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS');
+
+        /** @var Label|null $label */
+        $label = $this->labelRepository->find($labelId);
+        $path = $document === 'cn23' ? $label?->getPathCn23() : $label?->getPath();
+        if (!$path) {
+            throw $this->createNotFoundException();
+        }
+
+        // labels are stored outside of the public directory, check the file is still inside the storage folder
+        $file = realpath($this->basePath . $path);
+        $storage = realpath($this->basePath . $this->labelColissimoUploadPath);
+        if (!$file || !$storage || !str_starts_with($file, $storage . \DIRECTORY_SEPARATOR)) {
+            throw $this->createNotFoundException();
+        }
+
+        $response = new BinaryFileResponse($file);
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($file));
+
+        return $response;
+    }
+
     public function deleteLabelAjax(Request $request, int $labelId): JsonResponse
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS');
+        if (!$this->isCsrfTokenValid('arobases_delete_label_' . $labelId, (string) $request->request->get('_token'))) {
+            return new JsonResponse('invalid csrf token', Response::HTTP_FORBIDDEN);
+        }
+
         /** @var Label $label */
         $label = $this->labelRepository->find($labelId);
         if (!$label) {
             return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
         }
 
-        @unlink($label->getPath());
+        if ($label->getPath())
+            @unlink($this->basePath . $label->getPath());
         if ($label->getPathCn23())
-            @unlink($label->getPathCn23());
+            @unlink($this->basePath . $label->getPathCn23());
         $this->entityManager->remove($label);
         $this->entityManager->flush();
 

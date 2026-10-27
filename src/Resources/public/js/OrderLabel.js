@@ -183,7 +183,8 @@ class OrderLabel {
 
         $.ajax({
             url: deleteBtn.dataset.deleteUrl,
-            type: "GET",
+            type: "POST",
+            data: {_token: deleteBtn.dataset.token},
             success: function () {
                 // clear summary before update it
                 let container = deleteBtn.closest('.label-summary');

@@ -29,7 +29,7 @@ return [
 # config/routes.yaml
 arobases_sylius_transporter_label_generation_admin:
     resource: "@ArobasesSyliusTransporterLabelGenerationPlugin/Resources/config/admin_routing.yml"
-    prefix: /admin
+    prefix: /%sylius_admin.path_name%
 ```
 
 ### Step 4: Import config
@@ -129,7 +129,17 @@ bin/console sylius:theme:asset:install
 
 <h2 align="center">How it works</h2>
 
-!!! think to allow file writting for label generation (public/upload/label/colissimo) !!!
+!!! think to allow file writting for label generation (var/upload/label/colissimo) !!!
+
+Labels contain customer personal data, so they are stored outside of the public directory and downloaded from the admin only.
+
+### Upgrade from 0.0.x
+
+Labels were previously stored in `public/upload/label/`. Move them to the new private folder so they are no longer publicly accessible:
+```bash
+mkdir -p var/upload
+mv public/upload/label var/upload/label
+```
 
 ### Add a transporter
 

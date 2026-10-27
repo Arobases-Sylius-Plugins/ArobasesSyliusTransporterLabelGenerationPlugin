@@ -52,7 +52,7 @@
                     <td>
                         <div>
                             <div class="actions">
-                                <a class="button ui label icon" href="{{ asset(label.path) }}" download><i class="arrow circle down icon"></i></a>
+                                <a class="button ui label icon" href="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_download', {labelId: label.id, document: 'label'}) }}" download><i class="arrow circle down icon"></i></a>
                             </div>
                         </div>
                     </td>
@@ -60,12 +60,12 @@
                         <div>
                             {% if label.pathCn23 %}
                                 <div class="actions">
-                                    <a class="button ui label icon" href="{{ asset(label.pathCn23) }}" download><i class="arrow circle down icon"></i></a>
+                                    <a class="button ui label icon" href="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_download', {labelId: label.id, document: 'cn23'}) }}" download><i class="arrow circle down icon"></i></a>
                                 </div>
                             {% endif %}
                         </div>
                     </td>
-                    <td style="max-width: 50px; width: 50px;"><button class="button ui label red icon delete-label-btn" data-delete-url="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_delete_ajax', {labelId: label.id}) }}"><i class="trash alternate outline icon"></i></button></td>
+                    <td style="max-width: 50px; width: 50px;"><button class="button ui label red icon delete-label-btn" data-delete-url="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_delete_ajax', {labelId: label.id}) }}" data-token="{{ csrf_token('arobases_delete_label_' ~ label.id) }}"><i class="trash alternate outline icon"></i></button></td>
                 </tr>
             {% endfor %}
             </tbody>

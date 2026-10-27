@@ -85,9 +85,18 @@ arobases_sylius_transporter_label_generation_plugin_admin_render_label_summary:
   defaults:
     _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\OrderLabelController::renderLabelSummaryAjax
 
+arobases_sylius_transporter_label_generation_plugin_admin_label_download:
+  path: /label/{labelId}/download/{document}
+  methods: [GET]
+  requirements:
+    labelId: \d+
+    document: label|cn23
+  defaults:
+    _controller: Arobases\SyliusTransporterLabelGenerationPlugin\Controller\OrderLabelController::downloadLabel
+
 arobases_sylius_transporter_label_generation_plugin_admin_label_delete_ajax:
   path: /label/{labelId}/delete
-  methods: [GET]
+  methods: [POST]
   requirements:
     labelId: \d+
   defaults:

@@ -5,6 +5,7 @@
             <h2>{{ 'arobases_sylius_transporter_label_generation_plugin.order.details'|trans }}</h2>
             <button class="ui button icon primary generate-label-btn">{{ 'arobases_sylius_transporter_label_generation_plugin.ui.generate'|trans }}</button>
             <input type="hidden" name="order_id" value="{{ order.id }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('arobases_generate_label') }}">
         </div>
         <div>
             <div class="order-summary">

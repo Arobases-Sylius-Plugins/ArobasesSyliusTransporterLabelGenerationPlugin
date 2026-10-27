@@ -34,6 +34,8 @@ final class TransporterShipmentsController extends AbstractController
 
     public function renderUpdateForm(Request $request): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS');
+
         $transporterId = $request->query->get('transporterId');
         $shipmentId = $request->query->get('shipmentId');
         $orderId = $request->query->get('orderId');
@@ -54,16 +56,21 @@ final class TransporterShipmentsController extends AbstractController
 
     public function updateShipmentProductCode(Request $request): RedirectResponse
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS');
+
         /** @var FlashBagInterface $flashBag */
         $flashBag = $request->getSession()->getBag('flashes');
 
-        $productCodeData = $request->request->all('arobases_sylius_transporter_label_generation_product_code');
+        // the form is validated to check the csrf token and the product code
+        $form = $this->createForm(TransporterProductCodeType::class);
+        $form->handleRequest($request);
+        $productCodeData = $form->isSubmitted() ? $form->getData() : [];
         $shipmentId = $productCodeData['shipmentId'] ?? null;
         $transporterCode = $productCodeData['transporterCode'] ?? null;
         $transporterId = $productCodeData['transporterId'] ?? null;
         $orderId = $productCodeData['orderId'] ?? null;
-        /** @var Shipment $shipment */
-        $shipment = $this->shipmentRepository->find($shipmentId);
+        /** @var Shipment|null $shipment */
+        $shipment = $form->isSubmitted() && $form->isValid() && $shipmentId ? $this->shipmentRepository->find($shipmentId) : null;
         if (!$shipment) {
             $flashBag->add('update-shipping-method-error', 'arobases_sylius_transporter_label_generation_plugin.flashbag.error');
         } else {
@@ -78,15 +85,24 @@ final class TransporterShipmentsController extends AbstractController
             $flashBag->add('update-shipping-method-success', 'arobases_sylius_transporter_label_generation_plugin.flashbag.error');
         }
 
+        if (!$transporterId) {
+            return $this->redirectToRoute('arobases_sylius_transporter_label_generation_plugin_admin_transporter_index');
+        }
+
         return $this->redirectToRoute('arobases_sylius_transporter_label_generation_plugin_admin_transporter_show', ['id' => $transporterId]);
     }
 
     public function renderPickupPointMap(Request $request): Response
     {
-        /** @var Order $order */
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS');
+
+        /** @var Order|null $order */
         $order = $this->orderRepository->find($request->query->get('orderId'));
-        /** @var Shipment $shipment */
+        /** @var Shipment|null $shipment */
         $shipment = $this->shipmentRepository->find($request->query->get('shipmentId'));
+        if (!$order || !$shipment) {
+            throw $this->createNotFoundException();
+        }
         $transporterCode = $request->query->get('transporterCode');
 
         $addressForm = $this->formFactory->create(AddressType::class);
@@ -94,8 +110,9 @@ final class TransporterShipmentsController extends AbstractController
 
         // update order address
         if ($addressForm->isSubmitted() && $addressForm->isValid()) {
-            $this->entityManager->persist($addressForm);
-            $order->setShippingAddress($addressForm);
+            $address = $addressForm->getData();
+            $this->entityManager->persist($address);
+            $order->setShippingAddress($address);
             $this->entityManager->persist($order);
             $this->entityManager->flush();
 
@@ -121,6 +138,8 @@ final class TransporterShipmentsController extends AbstractController
 
     public function choosePickPointAjax(Request $request): JsonResponse
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS');
+
         $orderId = $request->request->get('order_id');
         $shipmentId = $request->request->get('shipment_selected_code');
         $transporterCode = $request->request->get('transporter_code');
