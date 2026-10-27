@@ -1,29 +1,29 @@
-{% import "@SyliusAdmin/Common/Macro/money.html.twig" as money %}
-
 {% if labels|length > 0 %}
-    <h2>{{ 'arobases_sylius_transporter_label_generation_plugin.ui.summary'|trans }}</h2>
-    {% if orderSent is defined and orderSent %}
-        <div class="badge green order-state">{{ 'arobases_sylius_transporter_label_generation_plugin.order.order_sent'|trans }}</div>
-    {% elseif orderSent is not defined or (orderSent == false and countLabelItems < 1) %}
-        <div class="badge red order-state">{{ 'arobases_sylius_transporter_label_generation_plugin.order.order_not_sent'|trans }}</div>
-    {% elseif orderSent == false and countLabelItems > 0 %}
-        <div class="badge orange order-state">{{ 'arobases_sylius_transporter_label_generation_plugin.order.order_partially_sent'|trans }}</div>
-    {% endif %}
-    <div>
-        <h3>{{ 'arobases_sylius_transporter_label_generation_plugin.ui.sent_products'|trans }}</h3>
-        <table>
+    <div class="d-flex align-items-center gap-2 border-bottom pb-2 mt-4 mb-3">
+        <h3 class="card-title mb-0">{{ 'arobases_sylius_transporter_label_generation_plugin.ui.summary'|trans }}</h3>
+        {% if orderSent is defined and orderSent %}
+            <span class="badge bg-green-lt">{{ 'arobases_sylius_transporter_label_generation_plugin.order.order_sent'|trans }}</span>
+        {% elseif orderSent is not defined or (orderSent == false and countLabelItems < 1) %}
+            <span class="badge bg-red-lt">{{ 'arobases_sylius_transporter_label_generation_plugin.order.order_not_sent'|trans }}</span>
+        {% elseif orderSent == false and countLabelItems > 0 %}
+            <span class="badge bg-orange-lt">{{ 'arobases_sylius_transporter_label_generation_plugin.order.order_partially_sent'|trans }}</span>
+        {% endif %}
+    </div>
+    <h4>{{ 'arobases_sylius_transporter_label_generation_plugin.ui.sent_products'|trans }}</h4>
+    <div class="table-responsive mb-3">
+        <table class="table table-sm table-vcenter">
             <thead>
             <tr>
-                <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label_item.product_name'|trans }}</td>
-                <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label_item.quantity'|trans }}</td>
-                <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label_item.tracking_number'|trans }}</td>
+                <th>{{ 'arobases_sylius_transporter_label_generation_plugin.label_item.product_name'|trans }}</th>
+                <th>{{ 'arobases_sylius_transporter_label_generation_plugin.label_item.quantity'|trans }}</th>
+                <th>{{ 'arobases_sylius_transporter_label_generation_plugin.label_item.tracking_number'|trans }}</th>
             </tr>
             </thead>
             <tbody>
             {% for label in labels %}
                 {% for item in label.labelItems %}
                     <tr>
-                        <td>{{ item.orderItem.variant.translation.name }}</td>
+                        <td>{{ item.orderItem ? item.orderItem.variant.translation.name }}</td>
                         <td>{{ item.quantity }}</td>
                         <td>{{ label.trackingNumber }}</td>
                     </tr>
@@ -32,45 +32,39 @@
             </tbody>
         </table>
     </div>
-    <div>
-        <h3>{{ 'arobases_sylius_transporter_label_generation_plugin.ui.generated_labels'|trans }}</h3>
-        <table>
+    <h4>{{ 'arobases_sylius_transporter_label_generation_plugin.ui.generated_labels'|trans }}</h4>
+    <div class="table-responsive">
+        <table class="table table-sm table-vcenter">
             <thead>
             <tr>
-                <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label.tracking_number'|trans }}</td>
-                <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label.simple_label'|trans }}</td>
-                <td>{{ 'arobases_sylius_transporter_label_generation_plugin.label.cn23'|trans }}</td>
-                <td style="max-width: 50px; width: 50px;"></td>
+                <th>{{ 'arobases_sylius_transporter_label_generation_plugin.label.tracking_number'|trans }}</th>
+                <th>{{ 'arobases_sylius_transporter_label_generation_plugin.label.simple_label'|trans }}</th>
+                <th>{{ 'arobases_sylius_transporter_label_generation_plugin.label.cn23'|trans }}</th>
+                <th class="w-1"></th>
             </tr>
             </thead>
             <tbody>
             {% for label in labels %}
                 <tr>
+                    <td>{{ label.trackingNumber }}</td>
                     <td>
-                        <span>{{ label.trackingNumber }}</span>
+                        {% if label.path %}
+                            <a class="btn btn-icon btn-sm" href="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_download', {labelId: label.id, document: 'label'}) }}" download>{{ ux_icon('tabler:download', {class: 'icon m-0'}) }}</a>
+                        {% endif %}
                     </td>
                     <td>
-                        <div>
-                            <div class="actions">
-                                <a class="button ui label icon" href="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_download', {labelId: label.id, document: 'label'}) }}" download><i class="arrow circle down icon"></i></a>
-                            </div>
-                        </div>
+                        {% if label.pathCn23 %}
+                            <a class="btn btn-icon btn-sm" href="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_download', {labelId: label.id, document: 'cn23'}) }}" download>{{ ux_icon('tabler:download', {class: 'icon m-0'}) }}</a>
+                        {% endif %}
                     </td>
                     <td>
-                        <div>
-                            {% if label.pathCn23 %}
-                                <div class="actions">
-                                    <a class="button ui label icon" href="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_download', {labelId: label.id, document: 'cn23'}) }}" download><i class="arrow circle down icon"></i></a>
-                                </div>
-                            {% endif %}
-                        </div>
+                        <button type="button" class="btn btn-icon btn-sm btn-outline-danger delete-label-btn" data-delete-url="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_delete_ajax', {labelId: label.id}) }}" data-token="{{ csrf_token('arobases_delete_label_' ~ label.id) }}">{{ ux_icon('tabler:trash', {class: 'icon m-0'}) }}</button>
                     </td>
-                    <td style="max-width: 50px; width: 50px;"><button class="button ui label red icon delete-label-btn" data-delete-url="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_label_delete_ajax', {labelId: label.id}) }}" data-token="{{ csrf_token('arobases_delete_label_' ~ label.id) }}"><i class="trash alternate outline icon"></i></button></td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
 {% else %}
-    <div class="badge red order-state">{{ 'arobases_sylius_transporter_label_generation_plugin.order.order_not_sent'|trans }}</div>
+    <div class="mt-4"><span class="badge bg-red-lt">{{ 'arobases_sylius_transporter_label_generation_plugin.order.order_not_sent'|trans }}</span></div>
 {% endif %}

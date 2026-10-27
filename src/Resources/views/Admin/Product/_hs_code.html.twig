@@ -1,0 +1,8 @@
+{% set form = hookable_metadata.context.form %}
+
+{# the field is added by the application ProductType extension, see README #}
+{% if form.hsCode is defined %}
+    <div class="mb-3">
+        {{ form_row(form.hsCode) }}
+    </div>
+{% endif %}

@@ -1,3 +1,7 @@
 arobases_sylius_transporter_label_generation:
   message:
     access_denied: You don't have permission to access this page.
+arobases_sylius_transporter_label_generation_plugin:
+  flashbag:
+    error: An error occurred
+    update_shipping_method_transporter_code_sucess: The shipping service has been updated

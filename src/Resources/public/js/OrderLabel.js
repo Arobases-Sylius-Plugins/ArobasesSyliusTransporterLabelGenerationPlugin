@@ -1,108 +1,110 @@
 class OrderLabel {
     constructor() {
-        this.toggleBtn = document.querySelectorAll('.open-order-row');
-        this.weightAndQuantityInput = null;
-        this.generateLabelBtn = null;
-        this.deleteLabelBtn = null;
         this.typingTimer = null;
-        this.runningTimer = null;
+        this.pendingRequests = new Set();
 
         this.init();
     }
     init() {
-        let t = this;
-        this.weightAndQuantityInput = document.querySelectorAll('.change-order-item input');
-        this.generateLabelBtn = document.querySelectorAll('.generate-label-btn');
-
-        this.toggleBtn.forEach(btn=>{
-            btn.addEventListener('click', function (e) {
-                let tr = e.target.closest('tr');
-                // prevent double running
-                clearTimeout(this.runningTimer);
-                this.runningTimer = setTimeout(function () {
-                    t.toggleOrderDetails(tr);
-                }, 100);
-
-            })
-        });
-        this.weightAndQuantityInput.forEach(input=>{
-            input.addEventListener('input', function (e) {
-                t.updateWeightOrQuantity(e.target);
-            })
-        })
-        this.generateLabelBtn.forEach(btn=>{
-            btn.addEventListener('click', function (e) {
+        // event delegation: order details and label summaries are loaded with ajax
+        document.addEventListener('click', (e) => {
+            const toggleBtn = e.target.closest('.open-order-row');
+            if (toggleBtn) {
                 e.preventDefault();
-                // prevent double running
-                clearTimeout(this.runningTimer);
-                this.runningTimer = setTimeout(function () {
-                    t.generateLabel(e.target.closest('form'));
-                }, 100);
-            })
-        })
-    }
-    toggleOrderDetails(tr) {
-        let orderNumber = tr.querySelector('[data-render-order-url]').dataset.number;
-
-        // create order details once instead of at every clic
-        if (!tr.classList.contains('loaded')) {
-            this.createOrderDetails(tr);
-        }
-
-        let orderDetailsRow = document.querySelector('[data-order-number="'+orderNumber+'"]');
-        let i = tr.querySelector('[data-render-order-url] > i');
-        if (tr.classList.contains('active')) {
-            tr.classList.remove('active');
-            orderDetailsRow.style.display = "none";
-            this.toggleIcon(i, "plus");
-        }
-        else {
-            tr.classList.add('active');
-            orderDetailsRow.style.display = "table-row";
-            this.toggleIcon(i, "minus");
-        }
-    }
-    createOrderDetails(tr) {
-        let t = this;
-        let url = tr.querySelector('[data-render-order-url]').dataset.renderOrderUrl;
-        let orderNumber = tr.querySelector('[data-render-order-url]').dataset.number;
-        let newTr = document.createElement('tr');
-        let newTd = document.createElement('td');
-        let countTds = tr.querySelectorAll('td').length;
-
-        newTr.dataset.orderNumber = orderNumber;
-        newTr.append(newTd);
-        newTd.setAttribute('colspan', countTds);
-        tr.after(newTr);
-
-        $.ajax({
-            url: url,
-            type: "GET",
-            success: function (response) {
-                if (response.html && response.html !== "") {
-                    newTd.innerHTML = response.html;
-                    tr.classList.add('loaded');
-                    tr.classList.add('active');
-                    t.renderLabelSummary(newTd.querySelector('.order-details-container'));
-                    t.init();
-                }
-            },
-            error: function () {
-                alert("error");
+                this.toggleOrderDetails(toggleBtn.closest('tr'));
+                return;
+            }
+            const deleteBtn = e.target.closest('.delete-label-btn');
+            if (deleteBtn) {
+                e.preventDefault();
+                this.deleteLabel(deleteBtn);
+            }
+        });
+        document.addEventListener('submit', (e) => {
+            const form = e.target.closest('form[name="updated-order"]');
+            if (form) {
+                e.preventDefault();
+                this.generateLabel(form);
+            }
+        });
+        document.addEventListener('input', (e) => {
+            if (e.target.closest('.change-order-item')) {
+                this.updateWeightOrQuantity(e.target);
             }
         });
     }
-    toggleIcon(i, value) {
-        i.classList.remove('plus', 'minus');
-        i.classList.add(value)
+    request(url, options = {}) {
+        options.headers = Object.assign({'X-Requested-With': 'XMLHttpRequest'}, options.headers || {});
+
+        return fetch(url, options).then((response) => {
+            return response.json().catch(() => null).then((data) => {
+                if (!response.ok) {
+                    throw new Error(typeof data === 'string' ? data : 'error');
+                }
+
+                return data;
+            });
+        });
+    }
+    // prevent double running
+    once(key, callback) {
+        if (this.pendingRequests.has(key)) {
+            return;
+        }
+        this.pendingRequests.add(key);
+        callback().catch((error) => alert(error.message)).finally(() => this.pendingRequests.delete(key));
+    }
+    toggleOrderDetails(tr) {
+        const button = tr.querySelector('[data-render-order-url]');
+        const orderNumber = button.dataset.number;
+
+        // create order details once instead of at every click
+        if (!tr.classList.contains('loaded')) {
+            this.createOrderDetails(tr);
+            return;
+        }
+
+        const orderDetailsRow = document.querySelector('tr[data-order-number="' + orderNumber + '"]');
+        const opened = !tr.classList.contains('active');
+        tr.classList.toggle('active', opened);
+        orderDetailsRow.style.display = opened ? 'table-row' : 'none';
+        this.toggleIcon(button, opened);
+    }
+    createOrderDetails(tr) {
+        const button = tr.querySelector('[data-render-order-url]');
+        const orderNumber = button.dataset.number;
+
+        this.once('details-' + orderNumber, () => {
+            return this.request(button.dataset.renderOrderUrl).then((response) => {
+                if (!response || !response.html) {
+                    return;
+                }
+                const newTr = document.createElement('tr');
+                const newTd = document.createElement('td');
+                newTr.dataset.orderNumber = orderNumber;
+                newTd.setAttribute('colspan', tr.querySelectorAll('td').length);
+                newTd.innerHTML = response.html;
+                newTr.append(newTd);
+                tr.after(newTr);
+
+                tr.classList.add('loaded', 'active');
+                this.toggleIcon(button, true);
+                this.updateTotalWeight(newTd.querySelector('form[name="updated-order"]'));
+
+                return this.renderLabelSummary(newTd.querySelector('.order-details-container'));
+            });
+        });
+    }
+    toggleIcon(button, opened) {
+        button.querySelector('.icon-plus').classList.toggle('d-none', opened);
+        button.querySelector('.icon-minus').classList.toggle('d-none', !opened);
     }
     updateWeightOrQuantity(input) {
         // update quantity or weight when done typing
         clearTimeout(this.typingTimer);
-        let t = this;
-        this.typingTimer = setTimeout(function () {
-            t.positiveInput(input);
-            t.updateTotalWeight(input.closest('form'));
+        this.typingTimer = setTimeout(() => {
+            this.positiveInput(input);
+            this.updateTotalWeight(input.closest('form'));
         }, 300);
     }
     positiveInput(input) {
@@ -111,94 +113,53 @@ class OrderLabel {
             input.value = 0;
     }
     updateTotalWeight(form) {
-        let datas = new FormData(form);
-        let orderItemIds = [];
-        let totalWeight = 0;
-        for (var key of datas.keys()) {
-            orderItemIds.push(key.replace('quantity_', '').replace('weight_', ''));
+        if (!form) {
+            return;
         }
-        orderItemIds = [...new Set(orderItemIds)]; // array unique
-        orderItemIds.forEach(item=>{
-            totalWeight += (datas.get('quantity_'+item) * datas.get('weight_'+item))
-        })
-        form.querySelector('.total-weight').value = totalWeight;
+        let totalWeight = 0;
+        form.querySelectorAll('input[name^="weight_"]').forEach((weightInput) => {
+            const itemId = weightInput.name.replace('weight_', '');
+            const quantityInput = form.querySelector('input[name="quantity_' + itemId + '"]');
+            totalWeight += (parseFloat(quantityInput.value) || 0) * (parseFloat(weightInput.value) || 0);
+        });
+        form.querySelector('.total-weight').value = Math.round(totalWeight * 1000) / 1000;
     }
     generateLabel(form) {
-        let t = this;
-        let orderNumber = form.closest('[data-order-number]').dataset.orderNumber;
-        let transporterId = document.querySelector('button[data-number="'+orderNumber+'"]').dataset.transporter;
-        let formData = new FormData(form);
-        formData.append("transporter", transporterId);
-        if (formData.get('total_weight') === 0 || formData.get('total_weight') === "") {
+        const orderNumber = form.closest('[data-order-number]').dataset.orderNumber;
+        const transporterId = document.querySelector('button[data-number="' + orderNumber + '"]').dataset.transporter;
+        const formData = new FormData(form);
+        formData.append('transporter', transporterId);
+        if (!parseFloat(formData.get('total_weight'))) {
             alert("Veuillez renseigner un poids total pour l'envoi.");
+            return;
         }
-        else {
-            $.ajax({
-                url: form.getAttribute('action'),
-                type: form.getAttribute('method'),
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    t.renderLabelSummary(form.closest('.order-details-container'));
-                },
-                error: function (response) {
-                    alert(response.responseJSON ? response.responseJSON : "error" );
-                }
-            });
-        }
+
+        this.once('generate-' + orderNumber, () => {
+            return this.request(form.getAttribute('action'), {method: 'POST', body: formData})
+                .then(() => this.renderLabelSummary(form.closest('.order-details-container')));
+        });
     }
     renderLabelSummary(orderDetailsContainer) {
-        let t = this;
-        let url = orderDetailsContainer.dataset.labelSummaryUrl;
-        let container = orderDetailsContainer.querySelector('.label-summary');
-        $.ajax({
-            url: url,
-            type: "GET",
-            success: function (response) {
-                if (response.html && response.html !== "") {
-                    container.innerHTML = response.html;
-                    this.deleteLabelBtn = document.querySelectorAll('.delete-label-btn');
-                    this.deleteLabelBtn.forEach(btn=>{
-                        btn.addEventListener('click', function (e) {
-                            e.preventDefault();
-                            t.deleteLabel(e.target);
-                        })
-                    })
-                    let form = container.closest('.order-details-container').querySelector('form[name="updated-order"]');
-                    if (form) {
-                        t.updateTotalWeight(form);
-                    }
-                }
-            },
-            error: function () {
-                alert("error");
+        const container = orderDetailsContainer.querySelector('.label-summary');
+
+        return this.request(orderDetailsContainer.dataset.labelSummaryUrl).then((response) => {
+            if (response && response.html) {
+                container.innerHTML = response.html;
             }
         });
     }
     deleteLabel(deleteBtn) {
-        let t = this;
-        if (!deleteBtn.classList.contains('button'))
-            deleteBtn = deleteBtn.parentElement;
+        const body = new FormData();
+        body.append('_token', deleteBtn.dataset.token);
+        const orderDetailsContainer = deleteBtn.closest('.order-details-container');
 
-        $.ajax({
-            url: deleteBtn.dataset.deleteUrl,
-            type: "POST",
-            data: {_token: deleteBtn.dataset.token},
-            success: function () {
-                // clear summary before update it
-                let container = deleteBtn.closest('.label-summary');
-                container.innerHTML = "";
-                t.renderLabelSummary(container.closest('.order-details-container'));
-                t.init();
-            },
-            error: function () {
-                alert("error");
-            }
+        this.once(deleteBtn.dataset.deleteUrl, () => {
+            return this.request(deleteBtn.dataset.deleteUrl, {method: 'POST', body: body})
+                .then(() => this.renderLabelSummary(orderDetailsContainer));
         });
     }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    const $OrderLabel = new OrderLabel();
+    new OrderLabel();
 });

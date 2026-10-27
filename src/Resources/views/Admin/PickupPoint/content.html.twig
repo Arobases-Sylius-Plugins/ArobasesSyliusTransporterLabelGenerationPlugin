@@ -1,0 +1,69 @@
+{% from '@SyliusAdmin/shared/helper/breadcrumbs.html.twig' import breadcrumbs %}
+{% import '@SyliusAdmin/shared/helper/header.html.twig' as header %}
+
+{% set order = hookable_metadata.context.order %}
+{% set shipment = hookable_metadata.context.shipment %}
+{% set addressForm = hookable_metadata.context.addressForm %}
+{% set transporterCode = hookable_metadata.context.transporterCode %}
+
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            {{ breadcrumbs([
+                { name: 'sylius.ui.dashboard', url: path('sylius_admin_dashboard'), active: false },
+                { name: 'arobases_sylius_transporter_label_generation_plugin.ui.transporters', url: path('arobases_sylius_transporter_label_generation_plugin_admin_transporter_index'), active: false },
+                shipment.transporter ? { name: 'arobases_sylius_transporter_label_generation_plugin.ui.colissimo', url: path('arobases_sylius_transporter_label_generation_plugin_admin_transporter_show', {id: shipment.transporter.id}), active: false } : {},
+                { name: 'arobases_sylius_transporter_label_generation_plugin.ui.choose_pickup_point', active: true },
+            ]) }}
+            <div class="row g-2 align-items-center">
+                {{ header.h1('arobases_sylius_transporter_label_generation_plugin.ui.choose_pickup_point'|trans, 'tabler:map-pin', '#' ~ order.number) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="card mb-3">
+                <div id="map" style="height: 300px;"></div>
+            </div>
+
+            {# ----- update order address form #}
+            <button type="button" class="btn mb-3" id="updateOrderAddress">
+                {{ 'arobases_sylius_transporter_label_generation_plugin.form.update_order_address'|trans }}
+            </button>
+            <div class="card card-body mb-3" id="updateOrderAddressForm" style="display: none;" data-firstname="{{ order.shippingAddress.firstName }}" data-lastname="{{ order.shippingAddress.lastName }}">
+                {% form_theme addressForm '@SyliusAdmin/shared/form_theme.html.twig' %}
+                {{ form_start(addressForm, {attr: {novalidate: 'novalidate'}}) }}
+                {{ form_rest(addressForm) }}
+                <input type="hidden" value="false" name="is_pickup_point" id="is_pickup_point">
+                <button type="submit" class="btn btn-primary mt-3">
+                    {{ 'arobases_sylius_transporter_label_generation_plugin.ui.update'|trans }}
+                </button>
+                {{ form_end(addressForm) }}
+            </div>
+            {# ----- end update order address form #}
+
+            <div class="row">
+                <div class="col-12 col-lg-8 mb-5" id="list_points"
+                     data-url="{{ path('arobases_sylius_transporter_label_generation_plugin_admin_choose_pickup_point_ajax') }}"
+                     data-shipment-id="{{ shipment.id }}"
+                     data-order-id="{{ order.id }}"
+                     data-transporter-code="{{ transporterCode }}">
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="card card-body text-center mb-3" id="pickup-summary">
+                        <div id="pickupCompany"></div>
+                        <div id="pickupStreet"></div>
+                        <div id="pickupCity"></div>
+                        <div id="pickupPostalcode"></div>
+                        <div id="pickupPhoneNumber"></div>
+                        <div id="pickupCountry"></div>
+                    </div>
+                    <button type="button" class="btn btn-primary w-100" id="selectPickup">
+                        {{ 'arobases_sylius_transporter_label_generation_plugin.ui.submit_pickup_point'|trans }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

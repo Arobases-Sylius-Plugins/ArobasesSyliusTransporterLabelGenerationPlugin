@@ -72,7 +72,7 @@ final class TransporterShipmentsController extends AbstractController
         /** @var Shipment|null $shipment */
         $shipment = $form->isSubmitted() && $form->isValid() && $shipmentId ? $this->shipmentRepository->find($shipmentId) : null;
         if (!$shipment) {
-            $flashBag->add('update-shipping-method-error', 'arobases_sylius_transporter_label_generation_plugin.flashbag.error');
+            $flashBag->add('error', 'arobases_sylius_transporter_label_generation_plugin.flashbag.error');
         } else {
             $shipment->setTransporterCode($transporterCode);
             $this->entityManager->persist($shipment);
@@ -82,7 +82,7 @@ final class TransporterShipmentsController extends AbstractController
             if ($transporterCode === 'A2P' || $transporterCode === 'BPR' || $transporterCode === 'CDI' || $transporterCode === 'CMT' || $transporterCode === 'BDP' || $transporterCode === 'PCS' || $transporterCode === 'ACP') {
                 return $this->redirectToRoute('arobases_sylius_transporter_label_generation_plugin_render_pickup_point_map', ['shipmentId' => $shipment->getId(), 'orderId' => $orderId, 'transporterCode' => $transporterCode]);
             }
-            $flashBag->add('update-shipping-method-success', 'arobases_sylius_transporter_label_generation_plugin.flashbag.error');
+            $flashBag->add('success', 'arobases_sylius_transporter_label_generation_plugin.flashbag.update_shipping_method_transporter_code_sucess');
         }
 
         if (!$transporterId) {
@@ -120,7 +120,7 @@ final class TransporterShipmentsController extends AbstractController
                 return $this->redirectToRoute('arobases_sylius_transporter_label_generation_plugin_admin_transporter_show', ['id' => $shipment->getTransporter()->getId()]);
             }
 
-            return $this->render('@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/choose_pickup_point.html.twig', [
+            return $this->render('@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/PickupPoint/index.html.twig', [
                 'order' => $order,
                 'shipment' => $shipment,
                 'addressForm' => $addressForm->createView(),
@@ -128,7 +128,7 @@ final class TransporterShipmentsController extends AbstractController
             ]);
         }
 
-        return $this->render('@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/TransporterOrder/choose_pickup_point.html.twig', [
+        return $this->render('@ArobasesSyliusTransporterLabelGenerationPlugin/Admin/PickupPoint/index.html.twig', [
             'order' => $order,
             'shipment' => $shipment,
             'addressForm' => $addressForm->createView(),

@@ -13,6 +13,6 @@ final class AdminMenuListener
         $menu = $event->getMenu();
         $menu->getChild('sales')->addChild('labelGeneration', [
             'route' => 'arobases_sylius_transporter_label_generation_plugin_admin_transporter_index',
-        ])->setLabel('arobases_sylius_transporter_label_generation_plugin.menu.admin.label_generation')->setLabelAttribute('icon', 'tag');
+        ])->setLabel('arobases_sylius_transporter_label_generation_plugin.menu.admin.label_generation')->setLabelAttribute('icon', 'tabler:truck-delivery');
     }
 }

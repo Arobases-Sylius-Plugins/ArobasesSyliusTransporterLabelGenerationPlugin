@@ -62,12 +62,16 @@ function showMap() {
   document.getElementById('list_points').innerHTML = "<div class='centerbloc'><div class='inner'>"+message+"<div></div>";
 
   let url = document.getElementById('list_points').dataset.url
-  $.ajax({
-    type: 'POST',
-    data: data,
-    url: url,
-    dataType : 'json',
-    success: function(data){
+  let body = new FormData();
+  Object.keys(data).forEach(key => body.append(key, data[key]));
+  fetch(url, {method: 'POST', body: body, headers: {'X-Requested-With': 'XMLHttpRequest'}})
+    .then(response => response.json().catch(() => null).then(json => {
+      if (!response.ok) {
+        throw new Error(typeof json === 'string' ? json : 'error');
+      }
+      return json;
+    }))
+    .then(function(data){
       points = [];
       for (let i = 0; i < data.listpoints.length; i++) {
         let point = data.listpoints[i];
@@ -98,7 +102,7 @@ function showMap() {
         listPointsHtml += 	"		Aucun point relais trouv&eacute;.";
         listPointsHtml += 	"	</div>";
         listPointsHtml += 	"</div>";
-        $('#list_points').html(listPointsHtml);
+        listPointsContainer.innerHTML = listPointsHtml;
       }
       for (let i = 0; i < pointsLength; i++) {
         let point = points[i];
@@ -176,18 +180,17 @@ function showMap() {
         markerClusters.addLayer(marker);
         markers[i] = marker;
       }
-      $('#list_points').html(listPointsHtml);
+      listPointsContainer.innerHTML = listPointsHtml;
 
       let group = new L.featureGroup(markers);
       map.fitBounds(group.getBounds().pad(0.5));
       map.addLayer(markerClusters);
 
       initEvent();
-    },
-    error: function(response) {
-      alert(response.responseJSON ? response.responseJSON : "error")
-    }
-  });
+    })
+    .catch(function(error) {
+      alert(error.message);
+    });
 }
 
 function hideWindows(map) {
@@ -211,7 +214,7 @@ function initMap(centerLat, centerLng, zoom) {
 function callBack(index) {
   let point = points[index];
 
-  $.each($('.point_item'), function(index, value ) {
+  document.querySelectorAll('.point_item').forEach(function(value) {
     value.style.backgroundColor = "";
     value.style.padding = "";
     value.style.marginTop = "";
@@ -224,7 +227,7 @@ function callBack(index) {
     }
   });
 
-  $.each($('.point_map_item'), function(index, value ) {
+  document.querySelectorAll('.point_map_item').forEach(function(value) {
     value.style.backgroundColor = "";
     value.style.padding = "";
     value.style.marginTop = "";
@@ -237,11 +240,11 @@ function callBack(index) {
     }
   });
 
-  $('#pickupCompany').empty().append(point.nom);
-  $('#pickupStreet').empty().append(point.adresse1);
-  $('#pickupCity').empty().append(point.localite);
-  $('#pickupPostalcode').empty().append(point.codePostal);
-  $('#pickupCountry').empty().append(point.libellePays);
+  document.getElementById('pickupCompany').textContent = point.nom;
+  document.getElementById('pickupStreet').textContent = point.adresse1;
+  document.getElementById('pickupCity').textContent = point.localite;
+  document.getElementById('pickupPostalcode').textContent = point.codePostal;
+  document.getElementById('pickupCountry').textContent = point.libellePays;
 
   completeAddressForm(point);
 }
