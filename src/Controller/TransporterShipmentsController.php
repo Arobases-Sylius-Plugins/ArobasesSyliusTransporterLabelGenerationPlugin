@@ -57,10 +57,11 @@ final class TransporterShipmentsController extends AbstractController
         /** @var FlashBagInterface $flashBag */
         $flashBag = $request->getSession()->getBag('flashes');
 
-        $shipmentId = $request->request->get('arobases_sylius_transporter_label_generation_product_code')['shipmentId'];
-        $transporterCode = $request->request->get('arobases_sylius_transporter_label_generation_product_code')['transporterCode'];
-        $transporterId = $request->request->get('arobases_sylius_transporter_label_generation_product_code')['transporterId'];
-        $orderId = $request->request->get('arobases_sylius_transporter_label_generation_product_code')['orderId'];
+        $productCodeData = $request->request->all('arobases_sylius_transporter_label_generation_product_code');
+        $shipmentId = $productCodeData['shipmentId'] ?? null;
+        $transporterCode = $productCodeData['transporterCode'] ?? null;
+        $transporterId = $productCodeData['transporterId'] ?? null;
+        $orderId = $productCodeData['orderId'] ?? null;
         /** @var Shipment $shipment */
         $shipment = $this->shipmentRepository->find($shipmentId);
         if (!$shipment) {

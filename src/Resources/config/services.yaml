@@ -15,8 +15,9 @@ services:
   Arobases\SyliusTransporterLabelGenerationPlugin\Controller\OrderLabelController:
     tags:
       - { name: controller.service_arguments }
+      - { name: container.service_subscriber }
     calls:
-      - [ setContainer, [ "@service_container" ] ]
+      - [ setContainer, [ '@Psr\Container\ContainerInterface' ] ]
     arguments:
       - '@sylius.repository.order'
       - '@doctrine.orm.entity_manager'
@@ -33,8 +34,9 @@ services:
   Arobases\SyliusTransporterLabelGenerationPlugin\Controller\TransporterShipmentsController:
     tags:
       - { name: controller.service_arguments }
+      - { name: container.service_subscriber }
     calls:
-      - [ setContainer, [ "@service_container" ] ]
+      - [ setContainer, [ '@Psr\Container\ContainerInterface' ] ]
     arguments:
       - '@arobases_sylius_transporter_label_generation_plugin.repository.transporter'
       - '@sylius.repository.shipment'
