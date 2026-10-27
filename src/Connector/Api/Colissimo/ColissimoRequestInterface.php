@@ -5,7 +5,7 @@ namespace Arobases\SyliusTransporterLabelGenerationPlugin\Connector\Api\Colissim
 use Sylius\Component\Core\Model\Channel;
 use Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Label;
 use Arobases\SyliusTransporterLabelGenerationPlugin\Entity\Transporter;
-use App\Entity\Order\Order;
+use Sylius\Component\Core\Model\Order;
 
 interface ColissimoRequestInterface
 {
